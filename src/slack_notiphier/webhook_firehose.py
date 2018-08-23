@@ -27,9 +27,16 @@ class WebhookFirehose:
 
     def _handle_transaction(self, transaction):
         if transaction['type'] == 'create-task':
-            return "User {} created task {}".format(transaction['creator'],
+            return "User {} created task {}".format(transaction['author'],
                                                     transaction['task'])
         elif transaction['type'] == 'create-comment':
-            return "User {} commented on task {} with {}".format(transaction['commentor'],
+            return "User {} commented on task {} with {}".format(transaction['author'],
                                                                  transaction['task'],
                                                                  transaction['comment'])
+        elif transaction['type'] == 'claim-task':
+            return "User {} claimed task {}".format(transaction['author'],
+                                                    transaction['task'])
+        elif transaction['type'] == 'assign-task':
+            return "User {} assigned {} to task {}".format(transaction['author'],
+                                                           transaction['asignee'],
+                                                           transaction['task'])

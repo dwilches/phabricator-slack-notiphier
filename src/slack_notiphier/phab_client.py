@@ -46,8 +46,8 @@ class PhabClient:
             if self._is_task(object_phid) and t['type'] == 'create':
                 results.append({
                     'type': 'create-task',
-                    'creator': t.get('authorPHID'),
-                    'task': t.get('objectPHID')
+                    'author': t['authorPHID'],
+                    'task': t['objectPHID']
                 })
             elif self._is_task(object_phid) and t['type'] == 'comment':
                 for comment in t['comments']:
@@ -56,9 +56,23 @@ class PhabClient:
 
                     results.append({
                         'type': 'create-comment',
-                        'commentor': t.get('authorPHID'),
-                        'task': t.get('objectPHID'),
+                        'author': t['authorPHID'],
+                        'task': t['objectPHID'],
                         'comment': comment['content']['raw']
+                    })
+            elif self._is_task(object_phid) and t['type'] == 'owner':
+                if t['authorPHID'] == t['fields']['new']:
+                    results.append({
+                        'type': 'claim-task',
+                        'author': t['authorPHID'],
+                        'task': t['objectPHID']
+                    })
+                else:
+                    results.append({
+                        'type': 'assign-task',
+                        'author': t['authorPHID'],
+                        'task': t['objectPHID'],
+                        'asignee': t['fields']['new']
                     })
 
         return results
