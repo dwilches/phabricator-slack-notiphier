@@ -14,16 +14,16 @@ class WebhookFirehose:
         object_phid = request['object']['phid']
 
         transactions = self.get_transactions(object_phid, request['transactions'])
-        message = self._handle_transactions(transactions)
-
-        self._slack_client.send_message(message)
+        self._handle_transactions(transactions)
 
     def get_transactions(self, object_phid, wrapped_phids):
         phids = [t['phid'] for t in wrapped_phids]
         return self._phab_client.get_transactions(object_phid, phids)
 
     def _handle_transactions(self, transactions):
-        return [ self._handle_transaction(t) for t in transactions]
+        for t in transactions:
+            message = self._handle_transaction(t)
+            self._slack_client.send_message(message)
 
     def _handle_transaction(self, transaction):
         if transaction['type'] == 'create-task':
