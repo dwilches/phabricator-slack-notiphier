@@ -1,0 +1,35 @@
+
+from .phab_client import PhabClient
+from .slack_client import SlackClient
+
+
+class WebhookFirehose:
+
+    def __init__(self):
+        self._slack_client = SlackClient()
+        self._phab_client = PhabClient()
+
+    def handle(self, request):
+        #object_type = request['object']['type']
+        object_phid = request['object']['phid']
+
+        transactions = self.get_transactions(object_phid, request['transactions'])
+        message = self._handle_transactions(transactions)
+
+        self._slack_client.send_message(message)
+
+    def get_transactions(self, object_phid, wrapped_phids):
+        phids = [t['phid'] for t in wrapped_phids]
+        return self._phab_client.get_transactions(object_phid, phids)
+
+    def _handle_transactions(self, transactions):
+        return [ self._handle_transaction(t) for t in transactions]
+
+    def _handle_transaction(self, transaction):
+        if transaction['type'] == 'create-task':
+            return "User {} created task {}".format(transaction['creator'],
+                                                    transaction['task'])
+        elif transaction['type'] == 'create-comment':
+            return "User {} commented on task {} with {}".format(transaction['commentor'],
+                                                                 transaction['task'],
+                                                                 transaction['comment'])

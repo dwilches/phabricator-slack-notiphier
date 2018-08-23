@@ -36,3 +36,6 @@ class SlackClient:
 
         return { user['real_name']: user['id'] for user in response['members']
                  if not user.get('is_bot', True) and user.get('real_name') }
+
+    def send_message(self, message):
+        print(message)

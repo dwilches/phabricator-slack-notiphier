@@ -35,3 +35,33 @@ class PhabClient:
                  if 'disabled' not in user['fields']['roles'] and
                     'bot' not in user['fields']['roles'] and
                     user['phid'].startswith('PHID-USER')}
+
+    def get_transactions(self, object_phid, tx_phids):
+        constraints = {'phids': tx_phids}
+        txs = self._client.transaction.search(objectIdentifier=object_phid,
+                                              constraints=constraints)
+
+        results = []
+        for t in txs.data:
+            if self._is_task(object_phid) and t['type'] == 'create':
+                results.append({
+                    'type': 'create-task',
+                    'creator': t.get('authorPHID'),
+                    'task': t.get('objectPHID')
+                })
+            elif self._is_task(object_phid) and t['type'] == 'comment':
+                for comment in t['comments']:
+                    if comment['removed']:
+                        continue
+
+                    results.append({
+                        'type': 'create-comment',
+                        'commentor': t.get('authorPHID'),
+                        'task': t.get('objectPHID'),
+                        'comment': comment['content']['raw']
+                    })
+
+        return results
+
+    def _is_task(self, phid):
+        return phid.startswith('PHID-TASK-')

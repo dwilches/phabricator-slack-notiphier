@@ -1,0 +1,35 @@
+{
+  "object": {
+    "type": "TASK",
+    "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7"
+  },
+  "triggers": [
+    {
+      "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+    }
+  ],
+  "action": {
+    "test": false,
+    "silent": false,
+    "secure": false,
+    "epoch": 1534912744
+  },
+  "transactions": [
+    {
+      "phid": "PHID-XACT-TASK-j2suncsctokemky"
+    },
+    {
+      "phid": "PHID-XACT-TASK-3aqdcw5qmjhfcnx"
+    },
+    {
+      "phid": "PHID-XACT-TASK-sxcemm3e7wcusbd"
+    },
+    {
+      "phid": "PHID-XACT-TASK-ghhwbfzx2bpxfp2"
+    },
+    {
+      "phid": "PHID-XACT-TASK-nxq76cjtcfwxvhk"
+    }
+  ]
+}
+
