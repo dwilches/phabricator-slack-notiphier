@@ -29,7 +29,7 @@ class WebhookFirehose:
         if transaction['type'] == 'create-task':
             return "User {} created task {}".format(transaction['author'],
                                                     transaction['task'])
-        elif transaction['type'] == 'create-comment':
+        elif transaction['type'] == 'create-comment-task':
             return "User {} commented on task {} with {}".format(transaction['author'],
                                                                  transaction['task'],
                                                                  transaction['comment'])

@@ -55,7 +55,7 @@ class PhabClient:
                         continue
 
                     results.append({
-                        'type': 'create-comment',
+                        'type': 'create-comment-task',
                         'author': t['authorPHID'],
                         'task': t['objectPHID'],
                         'comment': comment['content']['raw']
