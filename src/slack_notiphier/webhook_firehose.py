@@ -40,3 +40,8 @@ class WebhookFirehose:
             return "User {} assigned {} to task {}".format(transaction['author'],
                                                            transaction['asignee'],
                                                            transaction['task'])
+        elif transaction['type'] == 'change-status-task':
+            return "User {} changed the status of task {} from {} to {}".format(transaction['author'],
+                                                                                transaction['task'],
+                                                                                transaction['old'],
+                                                                                transaction['new'])

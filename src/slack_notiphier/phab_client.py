@@ -74,6 +74,14 @@ class PhabClient:
                         'task': t['objectPHID'],
                         'asignee': t['fields']['new']
                     })
+            elif self._is_task(object_phid) and t['type'] == 'status':
+                results.append({
+                    'type': 'change-status-task',
+                    'author': t['authorPHID'],
+                    'task': t['objectPHID'],
+                    'old': t['fields']['old'],
+                    'new': t['fields']['new']
+                })
 
         return results
 
