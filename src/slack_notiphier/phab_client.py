@@ -51,6 +51,8 @@ class PhabClient:
                 results.extend(self._handle_task(t))
             elif self._is_diff(object_phid):
                 results.extend( self._handle_diff(t))
+            elif self._is_proj(object_phid):
+                results.extend( self._handle_proj(t))
             elif self._is_repo(object_phid):
                 results.extend( self._handle_repo(t))
             else:
@@ -97,6 +99,16 @@ class PhabClient:
                 'task': task['objectPHID'],
                 'old': task['fields']['old'],
                 'new': task['fields']['new']
+            }
+        else:
+            self._logger.debug(colored("No message will be generated", 'red'))
+
+    def _handle_proj(self, repo):
+        if repo['type'] == 'create':
+            yield {
+                'type': 'create-proj',
+                'author': repo['authorPHID'],
+                'proj': repo['objectPHID']
             }
         else:
             self._logger.debug(colored("No message will be generated", 'red'))
@@ -149,6 +161,9 @@ class PhabClient:
 
     def _is_diff(self, phid):
         return phid.startswith('PHID-DREV-')
+
+    def _is_proj(self, phid):
+        return phid.startswith('PHID-PROJ-')
 
     def _is_repo(self, phid):
         return phid.startswith('PHID-REPO-')

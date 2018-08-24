@@ -1,0 +1,34 @@
+{
+    "object": {
+        "type": "PROJ",
+        "phid": "PHID-PROJ-p5je4exyqjacndsavolp"
+    },
+    "triggers": [
+        {
+            "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+        }
+    ],
+    "action": {
+        "test": false,
+        "silent": false,
+        "secure": false,
+        "epoch": 1535089206
+    },
+    "transactions": [
+        {
+            "phid": "PHID-XACT-PROJ-mzpst7ienafipnj"
+        },
+        {
+            "phid": "PHID-XACT-PROJ-yrg5trnsthouj7l"
+        },
+        {
+            "phid": "PHID-XACT-PROJ-ttzcoigznzzypil"
+        },
+        {
+            "phid": "PHID-XACT-PROJ-yw2nyvrl4ujeeuh"
+        },
+        {
+            "phid": "PHID-XACT-PROJ-d3ypzxusa2iw6gj"
+        }
+    ]
+}
