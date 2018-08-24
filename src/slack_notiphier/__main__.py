@@ -1,8 +1,10 @@
 
 from flask import Flask, request, abort, make_response, jsonify
+import logging
 
 from .webhook_firehose import WebhookFirehose
 
+logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 
 app = Flask(__name__)
 handler = WebhookFirehose()
@@ -11,11 +13,6 @@ handler = WebhookFirehose()
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
-
-
-@app.route('/', methods=['GET'])
-def hello():
-    return 'Hello, World!'
 
 
 @app.route('/firehose', methods=['POST'])

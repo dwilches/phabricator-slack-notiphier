@@ -1,4 +1,5 @@
 
+import json
 import logging
 import os
 
@@ -43,6 +44,8 @@ class PhabClient:
 
         results = []
         for t in txs.data:
+            self._logger.debug("Transaction:\n{}".format(json.dumps(t, indent=4)))
+
             if self._is_task(object_phid) and t['type'] == 'create':
                 results.append({
                     'type': 'create-task',

@@ -1,9 +1,14 @@
 
+import json
+import logging
+
 from .phab_client import PhabClient
 from .slack_client import SlackClient
 
 
 class WebhookFirehose:
+
+    _logger = logging.getLogger('SlackClient')
 
     def __init__(self):
         self._slack_client = SlackClient()
@@ -12,6 +17,8 @@ class WebhookFirehose:
     def handle(self, request):
         #object_type = request['object']['type']
         object_phid = request['object']['phid']
+
+        self._logger.debug("Incoming message:\n{}".format(json.dumps(request, indent=4)))
 
         transactions = self.get_transactions(object_phid, request['transactions'])
         self._handle_transactions(transactions)
@@ -24,6 +31,8 @@ class WebhookFirehose:
         for t in transactions:
             message = self._handle_transaction(t)
             self._slack_client.send_message(message)
+
+            self._logger.debug("Message: {}".format(message))
 
     def _handle_transaction(self, transaction):
         if transaction['type'] == 'create-task':
