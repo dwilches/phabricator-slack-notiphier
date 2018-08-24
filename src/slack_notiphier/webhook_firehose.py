@@ -64,6 +64,9 @@ class WebhookFirehose:
             return "User {} commented on diff {} with {}".format(transaction['author'],
                                                                  transaction['diff'],
                                                                  transaction['comment'])
+        elif transaction['type'] == 'update-diff':
+            return "User {} updated diff {}".format(transaction['author'],
+                                                    transaction['diff'])
         elif transaction['type'] == 'abandon-diff':
             return "User {} abandoned diff {}".format(transaction['author'],
                                                       transaction['diff'])

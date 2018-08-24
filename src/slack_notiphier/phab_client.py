@@ -141,6 +141,12 @@ class PhabClient:
                     'diff': diff['objectPHID'],
                     'comment': comment['content']['raw']
                 }
+        elif diff['type'] == 'update':
+            yield {
+                'type': 'update-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
         elif diff['type'] == 'abandon':
             yield {
                 'type': 'abandon-diff',
