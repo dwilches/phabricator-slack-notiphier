@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+from termcolor import colored
 
 from phabricator import Phabricator
 
@@ -44,7 +45,7 @@ class PhabClient:
 
         results = []
         for t in txs.data:
-            self._logger.debug("Transaction:\n{}".format(json.dumps(t, indent=4)))
+            self._logger.debug(colored("Transaction:\n{}".format(json.dumps(t, indent=4)), 'magenta'))
 
             if self._is_task(object_phid) and t['type'] == 'create':
                 results.append({
@@ -85,6 +86,8 @@ class PhabClient:
                     'old': t['fields']['old'],
                     'new': t['fields']['new']
                 })
+            else:
+                self._logger.debug(colored("No message will be generated"))
 
         return results
 

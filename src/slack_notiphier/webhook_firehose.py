@@ -1,6 +1,7 @@
 
 import json
 import logging
+from termcolor import colored
 
 from .phab_client import PhabClient
 from .slack_client import SlackClient
@@ -18,7 +19,7 @@ class WebhookFirehose:
         #object_type = request['object']['type']
         object_phid = request['object']['phid']
 
-        self._logger.debug("Incoming message:\n{}".format(json.dumps(request, indent=4)))
+        self._logger.debug(colored("Incoming message:\n{}".format(json.dumps(request, indent=4)), 'green'))
 
         transactions = self.get_transactions(object_phid, request['transactions'])
         self._handle_transactions(transactions)
@@ -32,7 +33,7 @@ class WebhookFirehose:
             message = self._handle_transaction(t)
             self._slack_client.send_message(message)
 
-            self._logger.debug("Message: {}".format(message))
+            self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
 
     def _handle_transaction(self, transaction):
         if transaction['type'] == 'create-task':
