@@ -32,7 +32,6 @@ class WebhookFirehose:
         for t in transactions:
             message = self._handle_transaction(t)
             self._slack_client.send_message(message)
-
             self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
 
     def _handle_transaction(self, transaction):
@@ -55,3 +54,6 @@ class WebhookFirehose:
                                                                                 transaction['task'],
                                                                                 transaction['old'],
                                                                                 transaction['new'])
+        elif transaction['type'] == 'create-repo':
+            return "User {} created repo {}".format(transaction['author'],
+                                                    transaction['repo'])

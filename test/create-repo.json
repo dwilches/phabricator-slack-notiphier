@@ -1,0 +1,28 @@
+{
+    "object": {
+        "type": "REPO",
+        "phid": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr"
+    },
+    "triggers": [
+        {
+            "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+        }
+    ],
+    "action": {
+        "test": false,
+        "silent": false,
+        "secure": false,
+        "epoch": 1535085583
+    },
+    "transactions": [
+        {
+            "phid": "PHID-XACT-REPO-lvpzbe5lmjndqmp"
+        },
+        {
+            "phid": "PHID-XACT-REPO-jnjslr52s2asuzl"
+        },
+        {
+            "phid": "PHID-XACT-REPO-lop4qwdd64j5hqz"
+        }
+    ]
+}

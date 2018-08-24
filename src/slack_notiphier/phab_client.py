@@ -47,49 +47,70 @@ class PhabClient:
         for t in txs.data:
             self._logger.debug(colored("Transaction:\n{}".format(json.dumps(t, indent=4)), 'magenta'))
 
-            if self._is_task(object_phid) and t['type'] == 'create':
-                results.append({
-                    'type': 'create-task',
-                    'author': t['authorPHID'],
-                    'task': t['objectPHID']
-                })
-            elif self._is_task(object_phid) and t['type'] == 'comment':
-                for comment in t['comments']:
-                    if comment['removed']:
-                        continue
-
-                    results.append({
-                        'type': 'create-comment-task',
-                        'author': t['authorPHID'],
-                        'task': t['objectPHID'],
-                        'comment': comment['content']['raw']
-                    })
-            elif self._is_task(object_phid) and t['type'] == 'owner':
-                if t['authorPHID'] == t['fields']['new']:
-                    results.append({
-                        'type': 'claim-task',
-                        'author': t['authorPHID'],
-                        'task': t['objectPHID']
-                    })
-                else:
-                    results.append({
-                        'type': 'assign-task',
-                        'author': t['authorPHID'],
-                        'task': t['objectPHID'],
-                        'asignee': t['fields']['new']
-                    })
-            elif self._is_task(object_phid) and t['type'] == 'status':
-                results.append({
-                    'type': 'change-status-task',
-                    'author': t['authorPHID'],
-                    'task': t['objectPHID'],
-                    'old': t['fields']['old'],
-                    'new': t['fields']['new']
-                })
+            if self._is_task(object_phid):
+                results.extend(self._handle_task(t))
+            elif self._is_repo(object_phid):
+                results.extend( self._handle_repo(t))
             else:
-                self._logger.debug(colored("No message will be generated"))
+                self._logger.debug(colored("No message will be generated", 'red'))
 
         return results
 
+    def _handle_task(self, task):
+        if task['type'] == 'create':
+            yield {
+                'type': 'create-task',
+                'author': task['authorPHID'],
+                'task': task['objectPHID']
+            }
+        elif task['type'] == 'comment':
+            for comment in task['comments']:
+                if comment['removed']:
+                    continue
+
+                yield {
+                    'type': 'create-comment-task',
+                    'author': task['authorPHID'],
+                    'task': task['objectPHID'],
+                    'comment': comment['content']['raw']
+                }
+        elif task['type'] == 'owner':
+            if task['authorPHID'] == task['fields']['new']:
+                yield {
+                    'type': 'claim-task',
+                    'author': task['authorPHID'],
+                    'task': task['objectPHID']
+                }
+            else:
+                yield {
+                    'type': 'assign-task',
+                    'author': task['authorPHID'],
+                    'task': task['objectPHID'],
+                    'asignee': task['fields']['new']
+                }
+        elif task['type'] == 'status':
+            yield {
+                'type': 'change-status-task',
+                'author': task['authorPHID'],
+                'task': task['objectPHID'],
+                'old': task['fields']['old'],
+                'new': task['fields']['new']
+            }
+        else:
+            self._logger.debug(colored("No message will be generated", 'red'))
+
+    def _handle_repo(self, repo):
+        if repo['type'] == 'create':
+            yield {
+                'type': 'create-repo',
+                'author': repo['authorPHID'],
+                'repo': repo['objectPHID']
+            }
+
+        self._logger.debug(colored("No message will be generated", 'red'))
+
     def _is_task(self, phid):
         return phid.startswith('PHID-TASK-')
+
+    def _is_repo(self, phid):
+        return phid.startswith('PHID-REPO-')
