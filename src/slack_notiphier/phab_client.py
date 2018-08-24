@@ -135,6 +135,12 @@ class PhabClient:
                 'author': diff['authorPHID'],
                 'diff': diff['objectPHID']
             }
+        elif diff['type'] == 'reclaim':
+            yield {
+                'type': 'reclaim-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
         else:
             self._logger.debug(colored("No message will be generated", 'red'))
 

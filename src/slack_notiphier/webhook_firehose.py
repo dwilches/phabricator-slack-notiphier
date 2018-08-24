@@ -67,3 +67,6 @@ class WebhookFirehose:
         elif transaction['type'] == 'abandon-diff':
             return "User {} abandoned diff {}".format(transaction['author'],
                                                       transaction['diff'])
+        elif transaction['type'] == 'reclaim-diff':
+            return "User {} reclaimed diff {}".format(transaction['author'],
+                                                      transaction['diff'])
