@@ -57,3 +57,13 @@ class WebhookFirehose:
         elif transaction['type'] == 'create-repo':
             return "User {} created repo {}".format(transaction['author'],
                                                     transaction['repo'])
+        elif transaction['type'] == 'create-diff':
+            return "User {} created diff {}".format(transaction['author'],
+                                                    transaction['diff'])
+        elif transaction['type'] == 'create-comment-diff':
+            return "User {} commented on diff {} with {}".format(transaction['author'],
+                                                                 transaction['diff'],
+                                                                 transaction['comment'])
+        elif transaction['type'] == 'abandon-diff':
+            return "User {} abandoned diff {}".format(transaction['author'],
+                                                      transaction['diff'])

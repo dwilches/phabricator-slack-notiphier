@@ -49,6 +49,8 @@ class PhabClient:
 
             if self._is_task(object_phid):
                 results.extend(self._handle_task(t))
+            elif self._is_diff(object_phid):
+                results.extend( self._handle_diff(t))
             elif self._is_repo(object_phid):
                 results.extend( self._handle_repo(t))
             else:
@@ -106,11 +108,41 @@ class PhabClient:
                 'author': repo['authorPHID'],
                 'repo': repo['objectPHID']
             }
+        else:
+            self._logger.debug(colored("No message will be generated", 'red'))
 
-        self._logger.debug(colored("No message will be generated", 'red'))
+    def _handle_diff(self, diff):
+        if diff['type'] == 'create':
+            yield {
+                'type': 'create-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
+        elif diff['type'] == 'comment':
+            for comment in diff['comments']:
+                if comment['removed']:
+                    continue
+
+                yield {
+                    'type': 'create-comment-diff',
+                    'author': diff['authorPHID'],
+                    'diff': diff['objectPHID'],
+                    'comment': comment['content']['raw']
+                }
+        elif diff['type'] == 'abandon':
+            yield {
+                'type': 'abandon-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
+        else:
+            self._logger.debug(colored("No message will be generated", 'red'))
 
     def _is_task(self, phid):
         return phid.startswith('PHID-TASK-')
+
+    def _is_diff(self, phid):
+        return phid.startswith('PHID-DREV-')
 
     def _is_repo(self, phid):
         return phid.startswith('PHID-REPO-')
