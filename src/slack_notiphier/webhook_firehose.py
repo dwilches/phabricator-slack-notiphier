@@ -37,7 +37,7 @@ class WebhookFirehose:
         self._logger.debug(colored("Incoming message:\n{}".format(json.dumps(request, indent=4)), 'green'))
 
         transactions = self._get_transactions(object_type, object_phid, request['transactions'])
-        self._handle_transactions(transactions)
+        self._handle_transactions(object_type, transactions)
 
     def _get_transactions(self, object_type, object_phid, wrapped_phids):
         """
@@ -47,32 +47,32 @@ class WebhookFirehose:
         phids = [t['phid'] for t in wrapped_phids]
         return self._phab_client.get_transactions(object_type, object_phid, phids)
 
-    def _handle_transactions(self, transactions):
+    def _handle_transactions(self, object_type, transactions):
         """
             Receives a list of interesting transactions and sends messages to Slack.
         """
         for t in transactions:
-            message = self._handle_transaction(t)
+            message = self._handle_transaction(object_type, t)
 
             if message:
                 self._slack_client.send_message(message)
                 self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
 
-    def _handle_transaction(self, transaction):
+    def _handle_transaction(self, object_type, transaction):
         """
             Receives a single interesting transaction and send a message to Slack.
         """
 
-        if transaction['type'].startswith("task-"):
+        if object_type == "TASK":
             return self._handle_task(transaction)
 
-        if transaction['type'].startswith("diff-"):
+        if object_type == "DREV":
             return self._handle_diff(transaction)
 
-        if transaction['type'].startswith("proj-"):
+        if object_type == "PROJ":
             return self._handle_proj(transaction)
 
-        if transaction['type'].startswith("repo-"):
+        if object_type == "REPO":
             return self._handle_repo(transaction)
 
         self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
