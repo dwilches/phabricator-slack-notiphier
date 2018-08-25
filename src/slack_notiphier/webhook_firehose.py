@@ -58,64 +58,64 @@ class WebhookFirehose:
         """
 
         # Tasks
-        if transaction['type'] == 'create-task':
+        if transaction['type'] == 'task-create':
             return "User {} created task {}".format(transaction['author'],
                                                     transaction['task'])
-        elif transaction['type'] == 'create-comment-task':
+        elif transaction['type'] == 'task-create-comment':
             return "User {} commented on task {} with {}".format(transaction['author'],
                                                                  transaction['task'],
                                                                  transaction['comment'])
-        elif transaction['type'] == 'claim-task':
+        elif transaction['type'] == 'task-claim':
             return "User {} claimed task {}".format(transaction['author'],
                                                     transaction['task'])
-        elif transaction['type'] == 'assign-task':
+        elif transaction['type'] == 'task-assign':
             return "User {} assigned {} to task {}".format(transaction['author'],
                                                            transaction['asignee'],
                                                            transaction['task'])
-        elif transaction['type'] == 'change-status-task':
+        elif transaction['type'] == 'task-change-status':
             return "User {} changed the status of task {} from {} to {}".format(transaction['author'],
                                                                                 transaction['task'],
                                                                                 transaction['old'],
                                                                                 transaction['new'])
-        elif transaction['type'] == 'change-priority-task':
+        elif transaction['type'] == 'task-change-priority':
             return "User {} changed the priority of task {} from {} to {}".format(transaction['author'],
                                                                                   transaction['task'],
                                                                                   transaction['old'],
                                                                                   transaction['new'])
 
         # Differential Revisions
-        elif transaction['type'] == 'create-diff':
+        elif transaction['type'] == 'diff-create':
             return "User {} created diff {}".format(transaction['author'],
                                                     transaction['diff'])
-        elif transaction['type'] == 'create-comment-diff':
+        elif transaction['type'] == 'diff-create-comment':
             return "User {} commented on diff {} with {}".format(transaction['author'],
                                                                  transaction['diff'],
                                                                  transaction['comment'])
-        elif transaction['type'] == 'update-diff':
+        elif transaction['type'] == 'diff-update':
             return "User {} updated diff {}".format(transaction['author'],
                                                     transaction['diff'])
-        elif transaction['type'] == 'abandon-diff':
+        elif transaction['type'] == 'diff-abandon':
             return "User {} abandoned diff {}".format(transaction['author'],
                                                       transaction['diff'])
-        elif transaction['type'] == 'reclaim-diff':
+        elif transaction['type'] == 'diff-reclaim':
             return "User {} reclaimed diff {}".format(transaction['author'],
                                                       transaction['diff'])
-        elif transaction['type'] == 'accept-diff':
+        elif transaction['type'] == 'diff-accept':
             return "User {} accepted diff {}".format(transaction['author'],
                                                      transaction['diff'])
-        elif transaction['type'] == 'request-changes-diff':
+        elif transaction['type'] == 'diff-request-changes':
             return "User {} requested changes to diff {}".format(transaction['author'],
                                                                  transaction['diff'])
-        elif transaction['type'] == 'commandeer-diff':
+        elif transaction['type'] == 'diff-commandeer':
             return "User {} took command of diff {}".format(transaction['author'],
                                                             transaction['diff'])
 
         # Projects
-        elif transaction['type'] == 'create-proj':
+        elif transaction['type'] == 'proj-create':
             return "User {} created project {}".format(transaction['author'],
                                                        transaction['proj'])
 
         # Repositories
-        elif transaction['type'] == 'create-repo':
+        elif transaction['type'] == 'repo-create':
             return "User {} created repo {}".format(transaction['author'],
                                                     transaction['repo'])
