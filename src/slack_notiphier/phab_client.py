@@ -38,7 +38,7 @@ class PhabClient:
                     'bot' not in user['fields']['roles'] and
                     user['phid'].startswith('PHID-USER')}
 
-    def get_transactions(self, object_phid, tx_phids):
+    def get_transactions(self, object_type, object_phid, tx_phids):
         constraints = {'phids': tx_phids}
 
         try:
@@ -55,16 +55,17 @@ class PhabClient:
         for t in txs.data:
             self._logger.debug(colored("Transaction:\n{}".format(json.dumps(t, indent=4)), 'magenta'))
 
-            if self._is_task(object_phid):
+            if object_type == 'TASK':
                 results.extend(self._handle_task(t))
-            elif self._is_diff(object_phid):
+            elif object_type == 'DREV':
                 results.extend( self._handle_diff(t))
-            elif self._is_proj(object_phid):
+            elif object_type == 'PROJ':
                 results.extend( self._handle_proj(t))
-            elif self._is_repo(object_phid):
+            elif object_type == 'REPO':
                 results.extend( self._handle_repo(t))
             else:
-                self._logger.debug(colored("No message will be generated", 'red'))
+                self._logger.debug(colored("No message will be generated for object of type {}".format(object_type),
+                                           'red'))
 
         return results
 

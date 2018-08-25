@@ -8,25 +8,33 @@ from .slack_client import SlackClient
 
 
 class WebhookFirehose:
+    """
+        Receives notifications coming from a Phabricator Firehose Webhook.
+        It then converts each notification to a human-readable message and sends it through Slack.
+    """
 
-    _logger = logging.getLogger('SlackClient')
+    _logger = logging.getLogger('WebhookFirehose')
 
     def __init__(self):
         self._slack_client = SlackClient()
         self._phab_client = PhabClient()
 
+        message = "Slack Notiphier started running."
+        self._logger.info(colored(message, 'green'))
+        self._slack_client.send_message(message)
+
     def handle(self, request):
-        #object_type = request['object']['type']
+        object_type = request['object']['type']
         object_phid = request['object']['phid']
 
         self._logger.debug(colored("Incoming message:\n{}".format(json.dumps(request, indent=4)), 'green'))
 
-        transactions = self.get_transactions(object_phid, request['transactions'])
+        transactions = self._get_transactions(object_type, object_phid, request['transactions'])
         self._handle_transactions(transactions)
 
-    def get_transactions(self, object_phid, wrapped_phids):
+    def _get_transactions(self, object_type, object_phid, wrapped_phids):
         phids = [t['phid'] for t in wrapped_phids]
-        return self._phab_client.get_transactions(object_phid, phids)
+        return self._phab_client.get_transactions(object_type, object_phid, phids)
 
     def _handle_transactions(self, transactions):
         for t in transactions:
