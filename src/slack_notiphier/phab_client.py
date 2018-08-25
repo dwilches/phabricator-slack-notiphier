@@ -4,7 +4,7 @@ import logging
 import os
 from termcolor import colored
 
-from phabricator import Phabricator
+from phabricator import Phabricator, APIError
 
 
 class PhabClient:
@@ -40,8 +40,16 @@ class PhabClient:
 
     def get_transactions(self, object_phid, tx_phids):
         constraints = {'phids': tx_phids}
-        txs = self._client.transaction.search(objectIdentifier=object_phid,
-                                              constraints=constraints)
+
+        try:
+            txs = self._client.transaction.search(objectIdentifier=object_phid,
+                                                  constraints=constraints)
+        except APIError as e:
+            # Swallow APIErrors related to unimplemented methods
+            if "not implemented" in e.message:
+                self._logger.error(colored("Unimplemented method in Phabricator: {}".format(e), 'red'))
+                return []
+            raise
 
         results = []
         for t in txs.data:
