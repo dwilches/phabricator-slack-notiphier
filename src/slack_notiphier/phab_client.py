@@ -2,6 +2,8 @@
 import json
 import logging
 import os
+from urllib.parse import urljoin, urlparse
+
 from termcolor import colored
 
 from phabricator import Phabricator, APIError
@@ -22,10 +24,11 @@ class PhabClient:
                 - NOTIPHIER_PHABRICATOR_TOKEN
         """
         self._url = os.environ.get('NOTIPHIER_PHABRICATOR_URL')
-        self._client = self._connect_phabricator(url=self._url + "/api/",
-                                                 token=os.environ.get('NOTIPHIER_PHABRICATOR_TOKEN'))
+        self._client = self._connect_phabricator(token=os.environ.get('NOTIPHIER_PHABRICATOR_TOKEN'))
 
-    def _connect_phabricator(self, url, token):
+    def _connect_phabricator(self, token):
+        url = urljoin(self._url, "api/")
+
         if not token:
             raise Exception("Can't find a token to connect to Phabricator.")
 
@@ -33,9 +36,12 @@ class PhabClient:
             raise Exception("Can't find Phabricator's URL.")
 
         try:
-            return Phabricator(host=url, token=token)
+            client = Phabricator(host=url, token=token)
+            # If the RUL is invalid, this health check should find it out
+            client.conduit.ping()
+            return client
         except Exception as e:
-            self._logger.error("Error connecting to Phabricator: " + str(e))
+            self._logger.error("Error connecting to Phabricator. Is the url '{}' valid?: {}".format(url, e))
             raise
 
     def get_users(self):
