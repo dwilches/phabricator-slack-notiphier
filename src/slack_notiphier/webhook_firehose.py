@@ -53,8 +53,10 @@ class WebhookFirehose:
         """
         for t in transactions:
             message = self._handle_transaction(t)
-            self._slack_client.send_message(message)
-            self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
+
+            if message:
+                self._slack_client.send_message(message)
+                self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
 
     def _handle_transaction(self, transaction):
         """
@@ -67,18 +69,13 @@ class WebhookFirehose:
         if transaction['type'].startswith("diff-"):
             return self._handle_diff(transaction)
 
-        #TODO: remove
-        author = self._users.get_mention(transaction['author']) if 'author' in transaction else None
+        if transaction['type'].startswith("proj-"):
+            return self._handle_proj(transaction)
 
-        # Projects
-        if transaction['type'] == 'proj-create':
-            return "User {} created project {}".format(author,
-                                                       transaction['proj'])
+        if transaction['type'].startswith("repo-"):
+            return self._handle_repo(transaction)
 
-        # Repositories
-        elif transaction['type'] == 'repo-create':
-            return "User {} created repo {}".format(author,
-                                                    transaction['repo'])
+        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
 
     def _handle_task(self, transaction):
         """
@@ -132,6 +129,8 @@ class WebhookFirehose:
                                                                                      transaction['new'])
             return "{} {}".format(owner_mention, message) if author_name != owner_name else message
 
+        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+
     def _handle_diff(self, transaction):
         """
             Receives an internal transaction object and returns a message ready for Slack.
@@ -159,20 +158,59 @@ class WebhookFirehose:
         elif transaction['type'] == 'diff-update':
             return "User {} updated diff {}".format(author_name,
                                                     diff_link)
+
         elif transaction['type'] == 'diff-abandon':
             return "User {} abandoned diff {}".format(author_name,
                                                       diff_link)
+
         elif transaction['type'] == 'diff-reclaim':
             return "User {} reclaimed diff {}".format(author_name,
                                                       diff_link)
+
         elif transaction['type'] == 'diff-accept':
             return "{} User {} accepted diff {}".format(owner_mention,
                                                         author_name,
                                                         diff_link)
+
         elif transaction['type'] == 'diff-request-changes':
             return "{} User {} requested changes to diff {}".format(owner_mention,
                                                                     author_name,
                                                                     diff_link)
+
         elif transaction['type'] == 'diff-commandeer':
             return "User {} took command of diff {}".format(author_name,
                                                             diff_link)
+
+        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+
+    def _handle_proj(self, transaction):
+        """
+            Receives an internal transaction object and returns a message ready for Slack.
+        """
+
+        proj_link = self._phab_client.get_link(transaction['proj'])
+
+        author_phid = transaction['author']
+        author_name = self._users[author_phid]['phab_username']
+
+        if transaction['type'] == 'proj-create':
+            return "User {} created project {}".format(author_name,
+                                                       proj_link)
+
+        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+
+    def _handle_repo(self, transaction):
+        """
+            Receives an internal transaction object and returns a message ready for Slack.
+        """
+
+        repo_link = self._phab_client.get_link(transaction['repo'])
+
+        author_phid = transaction['author']
+        author_name = self._users[author_phid]['phab_username']
+
+        if transaction['type'] == 'repo-create':
+            return "User {} created repository {}".format(author_name,
+                                                          repo_link)
+
+        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))

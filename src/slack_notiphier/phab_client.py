@@ -76,11 +76,11 @@ class PhabClient:
             if object_type == 'TASK':
                 results.extend(self._handle_task(t))
             elif object_type == 'DREV':
-                results.extend( self._handle_diff(t))
+                results.extend(self._handle_diff(t))
             elif object_type == 'PROJ':
-                results.extend( self._handle_proj(t))
+                results.extend(self._handle_proj(t))
             elif object_type == 'REPO':
-                results.extend( self._handle_repo(t))
+                results.extend(self._handle_repo(t))
             else:
                 self._logger.debug(colored("No message will be generated for object of type {}".format(object_type),
                                            'red'))
@@ -99,6 +99,18 @@ class PhabClient:
             diff_id = task['data'][0]['id']
             diff_name = task['data'][0]['fields']['title']
             return "<{}/D{}|D{}>: {}".format(self._url, diff_id, diff_id, diff_name)
+
+        if object_id.startswith("PHID-PROJ-"):
+            task = self._client.differential.project.search(constraints={'phids': [object_id]})
+            proj_id = task['data'][0]['id']
+            proj_name = task['data'][0]['fields']['name']
+            return "<{}/project/view/{}|{}>".format(self._url, proj_id, proj_name)
+
+        if object_id.startswith("PHID-REPO-"):
+            task = self._client.diffusion.repository.search(constraints={'phids': [object_id]})
+            proj_id = task['data'][0]['id']
+            proj_name = task['data'][0]['fields']['name']
+            return "<{}/source/{}|{}>".format(self._url, proj_id, proj_name)
 
         return None
 
@@ -250,7 +262,7 @@ class PhabClient:
         """
         if repo['type'] == 'create':
             yield {
-                'type': 'create-repo',
+                'type': 'repo-create',
                 'author': repo['authorPHID'],
                 'repo': repo['objectPHID']
             }
