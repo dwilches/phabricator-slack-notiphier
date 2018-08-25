@@ -8,10 +8,19 @@ from phabricator import Phabricator, APIError
 
 
 class PhabClient:
+    """
+        Encapsulates all interaction with Phabricator.
+    """
 
     _logger = logging.getLogger('PhabClient')
 
     def __init__(self):
+        """
+            Attempts to connect to Phabricator using the url and token supplied in slack Notiphier's config file.
+            If a url or token is not found in the config file, they will be looked up in the environment variables:
+                - NOTIPHIER_PHABRICATOR_URL
+                - NOTIPHIER_PHABRICATOR_TOKEN
+        """
         self._client = self._connect_phabricator(url=os.environ.get('NOTIPHIER_PHABRICATOR_URL'),
                                                  token=os.environ.get('NOTIPHIER_PHABRICATOR_TOKEN'))
 
@@ -29,16 +38,23 @@ class PhabClient:
             raise
 
     def get_users(self):
+        """
+            Returns the list of human users from Phabricators.
+            :return: {phid: (phab_username, phab_full_name)}
+        """
         self._logger.info("Getting list of users from Phabricator...")
 
         users = self._client.user.search()
-        return { user['phid']: (user['fields']['username'], user['fields']['realName'])
-                 for user in users.data
-                 if 'disabled' not in user['fields']['roles'] and
-                    'bot' not in user['fields']['roles'] and
-                    user['phid'].startswith('PHID-USER')}
+        return {user['phid']: (user['fields']['username'], user['fields']['realName'])
+                for user in users.data
+                if 'disabled' not in user['fields']['roles'] and
+                   'bot' not in user['fields']['roles'] and
+                   user['phid'].startswith('PHID-USER')}
 
     def get_transactions(self, object_type, object_phid, tx_phids):
+        """
+            Receives a list of Phabricator transactions and returns objects with only the relevant information, if any.
+        """
         constraints = {'phids': tx_phids}
 
         try:
@@ -55,6 +71,7 @@ class PhabClient:
         for t in txs.data:
             self._logger.debug(colored("Transaction:\n{}".format(json.dumps(t, indent=4)), 'magenta'))
 
+            # These types are as sent by Phabricator's Firehose Webhook
             if object_type == 'TASK':
                 results.extend(self._handle_task(t))
             elif object_type == 'DREV':
@@ -70,6 +87,10 @@ class PhabClient:
         return results
 
     def _handle_task(self, task):
+        """
+            Receives an object representing a transaction for a task (in Phabricator's own format).
+            Returns a generator with the relevant parts of the transactions.
+        """
         if task['type'] == 'create':
             yield {
                 'type': 'create-task',
@@ -121,6 +142,10 @@ class PhabClient:
             self._logger.debug(colored("No message will be generated", 'red'))
 
     def _handle_proj(self, repo):
+        """
+            Receives an object representing a transaction for a project (in Phabricator's own format).
+            Returns a generator with the relevant parts of the transactions.
+        """
         if repo['type'] == 'create':
             yield {
                 'type': 'create-proj',
@@ -131,6 +156,10 @@ class PhabClient:
             self._logger.debug(colored("No message will be generated", 'red'))
 
     def _handle_repo(self, repo):
+        """
+            Receives an object representing a transaction for a repository (in Phabricator's own format).
+            Returns a generator with the relevant parts of the transactions.
+        """
         if repo['type'] == 'create':
             yield {
                 'type': 'create-repo',
@@ -141,6 +170,10 @@ class PhabClient:
             self._logger.debug(colored("No message will be generated", 'red'))
 
     def _handle_diff(self, diff):
+        """
+            Receives an object representing a transaction for a differential revision (in Phabricator's own format).
+            Returns a generator with the relevant parts of the transactions.
+        """
         if diff['type'] == 'create':
             yield {
                 'type': 'create-diff',
@@ -196,15 +229,3 @@ class PhabClient:
             }
         else:
             self._logger.debug(colored("No message will be generated", 'red'))
-
-    def _is_task(self, phid):
-        return phid.startswith('PHID-TASK-')
-
-    def _is_diff(self, phid):
-        return phid.startswith('PHID-DREV-')
-
-    def _is_proj(self, phid):
-        return phid.startswith('PHID-PROJ-')
-
-    def _is_repo(self, phid):
-        return phid.startswith('PHID-REPO-')

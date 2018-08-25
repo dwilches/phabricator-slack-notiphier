@@ -6,6 +6,9 @@ from slackclient import SlackClient as Slack
 
 
 class SlackClient:
+    """
+        Encapsulates all interaction with Slack.
+    """
 
     _logger = logging.getLogger('SlackClient')
 

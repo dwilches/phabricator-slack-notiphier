@@ -12,7 +12,6 @@ class WebhookFirehose:
         Receives notifications coming from a Phabricator Firehose Webhook.
         It then converts each notification to a human-readable message and sends it through Slack.
     """
-
     _logger = logging.getLogger('WebhookFirehose')
 
     def __init__(self):
@@ -24,6 +23,10 @@ class WebhookFirehose:
         self._slack_client.send_message(message)
 
     def handle(self, request):
+        """
+            Handle a single request from one of Phabricator's Firehose webhooks.
+            It extracts the relevant data and sends the message to Slack.
+        """
         object_type = request['object']['type']
         object_phid = request['object']['phid']
 
@@ -33,16 +36,28 @@ class WebhookFirehose:
         self._handle_transactions(transactions)
 
     def _get_transactions(self, object_type, object_phid, wrapped_phids):
+        """
+            Receives a list of transactions as received by the Firehose, and returns a list with only the interesting
+            parts of the transactions.
+        """
         phids = [t['phid'] for t in wrapped_phids]
         return self._phab_client.get_transactions(object_type, object_phid, phids)
 
     def _handle_transactions(self, transactions):
+        """
+            Receives a list of interesting transactions and sends messages to Slack.
+        """
         for t in transactions:
             message = self._handle_transaction(t)
             self._slack_client.send_message(message)
             self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
 
     def _handle_transaction(self, transaction):
+        """
+            Receives a single interesting transaction and send a message to Slack.
+        """
+
+        # Tasks
         if transaction['type'] == 'create-task':
             return "User {} created task {}".format(transaction['author'],
                                                     transaction['task'])
@@ -67,9 +82,8 @@ class WebhookFirehose:
                                                                                   transaction['task'],
                                                                                   transaction['old'],
                                                                                   transaction['new'])
-        elif transaction['type'] == 'create-repo':
-            return "User {} created repo {}".format(transaction['author'],
-                                                    transaction['repo'])
+
+        # Differential Revisions
         elif transaction['type'] == 'create-diff':
             return "User {} created diff {}".format(transaction['author'],
                                                     transaction['diff'])
@@ -95,6 +109,13 @@ class WebhookFirehose:
         elif transaction['type'] == 'commandeer-diff':
             return "User {} took command of diff {}".format(transaction['author'],
                                                             transaction['diff'])
+
+        # Projects
         elif transaction['type'] == 'create-proj':
             return "User {} created project {}".format(transaction['author'],
                                                        transaction['proj'])
+
+        # Repositories
+        elif transaction['type'] == 'create-repo':
+            return "User {} created repo {}".format(transaction['author'],
+                                                    transaction['repo'])
