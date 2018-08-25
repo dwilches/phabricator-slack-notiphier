@@ -1,6 +1,5 @@
 
-import logging
-import os
+from .logger import Logger
 
 
 class Users:
@@ -20,7 +19,7 @@ class Users:
         '<@U98765>'
     """
 
-    _logger = logging.getLogger('Users')
+    _logger = Logger('Users')
     _merged_users = {}
 
     def __init__(self, phab_client, slack_client):
@@ -73,7 +72,7 @@ class Users:
         # Input looks like: 'Peter Parker'
         def get_slack_id(phab_fullname):
             if phab_fullname not in slack_users:
-                self._logger.warn("Couldn't find this user in Slack: " + phab_fullname)
+                self._logger.warn("Couldn't find this user in Slack: ", phab_fullname)
                 return None
 
             return slack_users[phab_fullname]

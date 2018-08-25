@@ -1,10 +1,8 @@
 
 from flask import Flask, request, abort, make_response, jsonify
-import logging
 
 from .webhook_firehose import WebhookFirehose
 
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 
 app = Flask(__name__)
 handler = WebhookFirehose()

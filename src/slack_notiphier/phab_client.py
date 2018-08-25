@@ -1,12 +1,11 @@
 
 import json
-import logging
 import os
-from urllib.parse import urljoin, urlparse
-
-from termcolor import colored
+from urllib.parse import urljoin
 
 from phabricator import Phabricator, APIError
+
+from .logger import Logger
 
 
 class PhabClient:
@@ -14,7 +13,7 @@ class PhabClient:
         Encapsulates all interaction with Phabricator.
     """
 
-    _logger = logging.getLogger('PhabClient')
+    _logger = Logger('PhabClient')
 
     def __init__(self):
         """
@@ -41,7 +40,7 @@ class PhabClient:
             client.conduit.ping()
             return client
         except Exception as e:
-            self._logger.error("Error connecting to Phabricator. Is the url '{}' valid?: {}".format(url, e))
+            self._logger.error("Error connecting to Phabricator. Is the url '{}' valid?: {}", url, e)
             raise
 
     def get_users(self):
@@ -70,13 +69,13 @@ class PhabClient:
         except APIError as e:
             # Swallow APIErrors related to unimplemented methods
             if "not implemented" in e.message:
-                self._logger.error(colored("Unimplemented method in Phabricator: {}".format(e), 'red'))
+                self._logger.error("Unimplemented method in Phabricator: {}", e)
                 return []
             raise
 
         results = []
         for t in txs.data:
-            self._logger.debug(colored("Transaction:\n{}".format(json.dumps(t, indent=4)), 'magenta'))
+            self._logger.debug("Transaction:\n{}", json.dumps(t, indent=4))
 
             # These types are as sent by Phabricator's Firehose Webhook
             if object_type == 'TASK':
@@ -88,8 +87,7 @@ class PhabClient:
             elif object_type == 'REPO':
                 results.extend(self._handle_repo(t))
             else:
-                self._logger.debug(colored("No message will be generated for object of type {}".format(object_type),
-                                           'red'))
+                self._logger.debug("No message will be generated for object of type {}", object_type)
 
         return results
 
@@ -192,7 +190,7 @@ class PhabClient:
                 'new': task['fields']['new']['name']
             }
         else:
-            self._logger.debug(colored("No message will be generated", 'red'))
+            self._logger.debug("No message will be generated")
 
     def _handle_diff(self, diff):
         """
@@ -253,7 +251,7 @@ class PhabClient:
                 'diff': diff['objectPHID']
             }
         else:
-            self._logger.debug(colored("No message will be generated", 'red'))
+            self._logger.debug("No message will be generated")
 
     def _handle_proj(self, repo):
         """
@@ -267,7 +265,7 @@ class PhabClient:
                 'proj': repo['objectPHID']
             }
         else:
-            self._logger.debug(colored("No message will be generated", 'red'))
+            self._logger.debug("No message will be generated")
 
     def _handle_repo(self, repo):
         """
@@ -281,4 +279,4 @@ class PhabClient:
                 'repo': repo['objectPHID']
             }
         else:
-            self._logger.debug(colored("No message will be generated", 'red'))
+            self._logger.debug("No message will be generated")

@@ -1,8 +1,9 @@
 
-import logging
 import os
 
 from slackclient import SlackClient as Slack
+
+from .logger import Logger
 
 
 class SlackClient:
@@ -10,7 +11,7 @@ class SlackClient:
         Encapsulates all interaction with Slack.
     """
 
-    _logger = logging.getLogger('SlackClient')
+    _logger = Logger('SlackClient')
 
     def __init__(self):
         self._client = self._connect_slack(os.environ.get('NOTIPHIER_SLACK_TOKEN'))
@@ -23,7 +24,7 @@ class SlackClient:
         try:
             return Slack(token)
         except Exception as e:
-            self._logger.error("Error connecting to Slack: " + str(e))
+            self._logger.error("Error connecting to Slack: ", e)
             raise
 
     def get_users(self):
@@ -38,8 +39,8 @@ class SlackClient:
         if not response['ok']:
             raise Exception("Couldn't retrieve user list from Slack. Error: " + str(response['error']))
 
-        return { user['real_name']: user['id'] for user in response['members']
-                 if not user.get('is_bot', True) and user.get('real_name') }
+        return {user['real_name']: user['id'] for user in response['members']
+                if not user.get('is_bot', True) and user.get('real_name')}
 
     def send_message(self, message):
         """
@@ -51,5 +52,6 @@ class SlackClient:
                                        channel=self._channel,
                                        text=message)
         if not result['ok']:
-            self._logger.error("Couldn't send message to Slack because '{}', dropping: {}".format(result['error'],
-                                                                                                  message))
+            self._logger.error("Couldn't send message to Slack because '{}', dropping: {}",
+                               result['error'],
+                               message)

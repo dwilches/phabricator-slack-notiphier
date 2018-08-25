@@ -1,10 +1,8 @@
 
 import json
-import logging
-from termcolor import colored
 
 from .users import Users
-
+from .logger import Logger
 from .phab_client import PhabClient
 from .slack_client import SlackClient
 
@@ -14,7 +12,7 @@ class WebhookFirehose:
         Receives notifications coming from a Phabricator Firehose Webhook.
         It then converts each notification to a human-readable message and sends it through Slack.
     """
-    _logger = logging.getLogger('WebhookFirehose')
+    _logger = Logger('WebhookFirehose')
 
     def __init__(self):
         self._slack_client = SlackClient()
@@ -23,7 +21,7 @@ class WebhookFirehose:
                             slack_client=self._slack_client)
 
         message = "Slack Notiphier started running."
-        self._logger.info(colored(message, 'green'))
+        self._logger.info(message)
         self._slack_client.send_message(message)
 
     def handle(self, request):
@@ -34,7 +32,7 @@ class WebhookFirehose:
         object_type = request['object']['type']
         object_phid = request['object']['phid']
 
-        self._logger.debug(colored("Incoming message:\n{}".format(json.dumps(request, indent=4)), 'green'))
+        self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
 
         transactions = self._get_transactions(object_type, object_phid, request['transactions'])
         self._handle_transactions(object_type, transactions)
@@ -56,7 +54,7 @@ class WebhookFirehose:
 
             if message:
                 self._slack_client.send_message(message)
-                self._logger.debug(colored("Message: {}".format(message), 'red', attrs=['bold']))
+                self._logger.debug("Message: {}", message)
 
     def _handle_transaction(self, object_type, transaction):
         """
@@ -75,7 +73,7 @@ class WebhookFirehose:
         if object_type == "REPO":
             return self._handle_repo(transaction)
 
-        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_task(self, transaction):
         """
@@ -129,7 +127,7 @@ class WebhookFirehose:
                                                                                      transaction['new'])
             return "{} {}".format(owner_mention, message) if author_name != owner_name else message
 
-        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_diff(self, transaction):
         """
@@ -181,7 +179,7 @@ class WebhookFirehose:
             return "User {} took command of diff {}".format(author_name,
                                                             diff_link)
 
-        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_proj(self, transaction):
         """
@@ -197,7 +195,7 @@ class WebhookFirehose:
             return "User {} created project {}".format(author_name,
                                                        proj_link)
 
-        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_repo(self, transaction):
         """
@@ -213,4 +211,4 @@ class WebhookFirehose:
             return "User {} created repository {}".format(author_name,
                                                           repo_link)
 
-        self._logger.warn("No message will be generated for: {}".format(json.dumps(transaction, indent=4)))
+        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
