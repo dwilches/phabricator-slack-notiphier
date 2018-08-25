@@ -21,7 +21,8 @@ class PhabClient:
                 - NOTIPHIER_PHABRICATOR_URL
                 - NOTIPHIER_PHABRICATOR_TOKEN
         """
-        self._client = self._connect_phabricator(url=os.environ.get('NOTIPHIER_PHABRICATOR_URL'),
+        self._url = os.environ.get('NOTIPHIER_PHABRICATOR_URL')
+        self._client = self._connect_phabricator(url=self._url + "/api/",
                                                  token=os.environ.get('NOTIPHIER_PHABRICATOR_TOKEN'))
 
     def _connect_phabricator(self, url, token):
@@ -85,6 +86,22 @@ class PhabClient:
                                            'red'))
 
         return results
+
+    def get_link(self, object_id):
+        if object_id.startswith("PHID-TASK-"):
+            task = self._client.maniphest.search(constraints={'phids': [object_id]})
+            task_id = task['data'][0]['id']
+            task_name = task['data'][0]['fields']['name']
+            return "<{}/T{}|T{}>: {}".format(self._url, task_id, task_id, task_name)
+
+        return None
+
+    def get_owner(self, object_id):
+        if object_id.startswith("PHID-TASK-"):
+            task = self._client.maniphest.search(constraints={'phids': [object_id]})
+            return task['data'][0]['fields']['ownerPHID']
+
+        return None
 
     def _handle_task(self, task):
         """

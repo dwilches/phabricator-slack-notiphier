@@ -3,21 +3,20 @@ import logging
 import os
 
 
-
 class Users:
     """
     Bridge to Slack and Phabricators user APIs.
     The only rquisite is the full name must match between both systems.
 
     Usage:
-        >>> users = Users(my_phab_url, my_phab_token, my_slack_token)
-        >>> users['pparker']
+        #>>> users = Users(my_phab_url, my_phab_token, my_slack_token)
+        #>>> users['pparker']
         {'phid': 'PHID-USER-1234', 'phab_username': 'pparker', 'slack_id': 'U98765'}
-        >>> users['PHID-USER-1234']
+        #>>> users['PHID-USER-1234']
         {'phid': 'PHID-USER-1234', 'phab_username': 'pparker', 'slack_id': 'U98765'}
-        >>> users.mention('pparker')
+        #>>> users.mention('pparker')
         '<@U98765>'
-        >>> users.mention('PHID-USER-1234')
+        #>>> users.mention('PHID-USER-1234')
         '<@U98765>'
     """
 
@@ -45,7 +44,7 @@ class Users:
 
         return next((u for u in self._merged_users.values() if u['phab_username'] == userid), None)
 
-    def mention(self, userid):
+    def get_mention(self, userid):
         """
             Returns a Slack mention given its PHID or Phabricator username.
 

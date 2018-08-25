@@ -3,6 +3,8 @@ import json
 import logging
 from termcolor import colored
 
+from .users import Users
+
 from .phab_client import PhabClient
 from .slack_client import SlackClient
 
@@ -17,6 +19,8 @@ class WebhookFirehose:
     def __init__(self):
         self._slack_client = SlackClient()
         self._phab_client = PhabClient()
+        self._users = Users(phab_client=self._phab_client,
+                            slack_client=self._slack_client)
 
         message = "Slack Notiphier started running."
         self._logger.info(colored(message, 'green'))
@@ -57,65 +61,94 @@ class WebhookFirehose:
             Receives a single interesting transaction and send a message to Slack.
         """
 
-        # Tasks
-        if transaction['type'] == 'task-create':
-            return "User {} created task {}".format(transaction['author'],
-                                                    transaction['task'])
-        elif transaction['type'] == 'task-create-comment':
-            return "User {} commented on task {} with {}".format(transaction['author'],
-                                                                 transaction['task'],
-                                                                 transaction['comment'])
-        elif transaction['type'] == 'task-claim':
-            return "User {} claimed task {}".format(transaction['author'],
-                                                    transaction['task'])
-        elif transaction['type'] == 'task-assign':
-            return "User {} assigned {} to task {}".format(transaction['author'],
-                                                           transaction['asignee'],
-                                                           transaction['task'])
-        elif transaction['type'] == 'task-change-status':
-            return "User {} changed the status of task {} from {} to {}".format(transaction['author'],
-                                                                                transaction['task'],
-                                                                                transaction['old'],
-                                                                                transaction['new'])
-        elif transaction['type'] == 'task-change-priority':
-            return "User {} changed the priority of task {} from {} to {}".format(transaction['author'],
-                                                                                  transaction['task'],
-                                                                                  transaction['old'],
-                                                                                  transaction['new'])
+        if transaction['type'].startswith("task-"):
+            return self._handle_task(transaction)
+
+        #TODO: remove
+        author = self._users.get_mention(transaction['author']) if 'author' in transaction else None
 
         # Differential Revisions
-        elif transaction['type'] == 'diff-create':
-            return "User {} created diff {}".format(transaction['author'],
+        if transaction['type'] == 'diff-create':
+            return "User {} created diff {}".format(author,
                                                     transaction['diff'])
         elif transaction['type'] == 'diff-create-comment':
-            return "User {} commented on diff {} with {}".format(transaction['author'],
+            return "User {} commented on diff {} with {}".format(author,
                                                                  transaction['diff'],
                                                                  transaction['comment'])
         elif transaction['type'] == 'diff-update':
-            return "User {} updated diff {}".format(transaction['author'],
+            return "User {} updated diff {}".format(author,
                                                     transaction['diff'])
         elif transaction['type'] == 'diff-abandon':
-            return "User {} abandoned diff {}".format(transaction['author'],
+            return "User {} abandoned diff {}".format(author,
                                                       transaction['diff'])
         elif transaction['type'] == 'diff-reclaim':
-            return "User {} reclaimed diff {}".format(transaction['author'],
+            return "User {} reclaimed diff {}".format(author,
                                                       transaction['diff'])
         elif transaction['type'] == 'diff-accept':
-            return "User {} accepted diff {}".format(transaction['author'],
+            return "User {} accepted diff {}".format(author,
                                                      transaction['diff'])
         elif transaction['type'] == 'diff-request-changes':
-            return "User {} requested changes to diff {}".format(transaction['author'],
+            return "User {} requested changes to diff {}".format(author,
                                                                  transaction['diff'])
         elif transaction['type'] == 'diff-commandeer':
-            return "User {} took command of diff {}".format(transaction['author'],
+            return "User {} took command of diff {}".format(author,
                                                             transaction['diff'])
 
         # Projects
         elif transaction['type'] == 'proj-create':
-            return "User {} created project {}".format(transaction['author'],
+            return "User {} created project {}".format(author,
                                                        transaction['proj'])
 
         # Repositories
         elif transaction['type'] == 'repo-create':
-            return "User {} created repo {}".format(transaction['author'],
+            return "User {} created repo {}".format(author,
                                                     transaction['repo'])
+
+    def _handle_task(self, transaction):
+
+        task_link = self._phab_client.get_link(transaction['task'])
+
+        owner_phid = self._phab_client.get_owner(transaction['task'])
+        owner_name = self._users[owner_phid]['phab_username']
+        owner_mention = self._users.get_mention(owner_phid)
+
+        author_phid = transaction['author']
+        author_name = self._users[author_phid]['phab_username']
+
+        if transaction['type'] == 'task-create':
+            return "User {} created task {}".format(author_name,
+                                                    task_link)
+        elif transaction['type'] == 'task-create-comment':
+            message = "User {} commented on task {} with: {}".format(author_name,
+                                                                     task_link,
+                                                                     transaction['comment'])
+
+            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+
+        elif transaction['type'] == 'task-claim':
+            return "User {} claimed task {}".format(author_name,
+                                                    task_link)
+
+        elif transaction['type'] == 'task-assign':
+            if transaction['asignee']:
+                asignee_mention = self._users.get_mention(transaction['asignee'])
+            else:
+                asignee_mention = "nobody"
+
+            return "User {} assigned {} to task {}".format(author_name,
+                                                           asignee_mention,
+                                                           task_link)
+
+        elif transaction['type'] == 'task-change-status':
+            message = "User {} changed the status of task {} from {} to {}".format(author_name,
+                                                                                   task_link,
+                                                                                   transaction['old'],
+                                                                                   transaction['new'])
+            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+
+        elif transaction['type'] == 'task-change-priority':
+            message = "User {} changed the priority of task {} from {} to {}".format(author_name,
+                                                                                     task_link,
+                                                                                     transaction['old'],
+                                                                                     transaction['new'])
+            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
