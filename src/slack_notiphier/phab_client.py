@@ -94,12 +94,22 @@ class PhabClient:
             task_name = task['data'][0]['fields']['name']
             return "<{}/T{}|T{}>: {}".format(self._url, task_id, task_id, task_name)
 
+        if object_id.startswith("PHID-DREV-"):
+            task = self._client.differential.revision.search(constraints={'phids': [object_id]})
+            diff_id = task['data'][0]['id']
+            diff_name = task['data'][0]['fields']['title']
+            return "<{}/D{}|D{}>: {}".format(self._url, diff_id, diff_id, diff_name)
+
         return None
 
     def get_owner(self, object_id):
         if object_id.startswith("PHID-TASK-"):
             task = self._client.maniphest.search(constraints={'phids': [object_id]})
             return task['data'][0]['fields']['ownerPHID']
+
+        if object_id.startswith("PHID-DREV-"):
+            task = self._client.differential.revision.search(constraints={'phids': [object_id]})
+            return task['data'][0]['fields']['authorPHID']
 
         return None
 

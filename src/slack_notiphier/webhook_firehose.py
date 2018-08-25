@@ -64,38 +64,14 @@ class WebhookFirehose:
         if transaction['type'].startswith("task-"):
             return self._handle_task(transaction)
 
+        if transaction['type'].startswith("diff-"):
+            return self._handle_diff(transaction)
+
         #TODO: remove
         author = self._users.get_mention(transaction['author']) if 'author' in transaction else None
 
-        # Differential Revisions
-        if transaction['type'] == 'diff-create':
-            return "User {} created diff {}".format(author,
-                                                    transaction['diff'])
-        elif transaction['type'] == 'diff-create-comment':
-            return "User {} commented on diff {} with {}".format(author,
-                                                                 transaction['diff'],
-                                                                 transaction['comment'])
-        elif transaction['type'] == 'diff-update':
-            return "User {} updated diff {}".format(author,
-                                                    transaction['diff'])
-        elif transaction['type'] == 'diff-abandon':
-            return "User {} abandoned diff {}".format(author,
-                                                      transaction['diff'])
-        elif transaction['type'] == 'diff-reclaim':
-            return "User {} reclaimed diff {}".format(author,
-                                                      transaction['diff'])
-        elif transaction['type'] == 'diff-accept':
-            return "User {} accepted diff {}".format(author,
-                                                     transaction['diff'])
-        elif transaction['type'] == 'diff-request-changes':
-            return "User {} requested changes to diff {}".format(author,
-                                                                 transaction['diff'])
-        elif transaction['type'] == 'diff-commandeer':
-            return "User {} took command of diff {}".format(author,
-                                                            transaction['diff'])
-
         # Projects
-        elif transaction['type'] == 'proj-create':
+        if transaction['type'] == 'proj-create':
             return "User {} created project {}".format(author,
                                                        transaction['proj'])
 
@@ -105,6 +81,9 @@ class WebhookFirehose:
                                                     transaction['repo'])
 
     def _handle_task(self, transaction):
+        """
+            Receives an internal transaction object and returns a message ready for Slack.
+        """
 
         task_link = self._phab_client.get_link(transaction['task'])
 
@@ -152,3 +131,48 @@ class WebhookFirehose:
                                                                                      transaction['old'],
                                                                                      transaction['new'])
             return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+
+    def _handle_diff(self, transaction):
+        """
+            Receives an internal transaction object and returns a message ready for Slack.
+        """
+
+        diff_link = self._phab_client.get_link(transaction['diff'])
+
+        owner_phid = self._phab_client.get_owner(transaction['diff'])
+        owner_name = self._users[owner_phid]['phab_username']
+        owner_mention = self._users.get_mention(owner_phid)
+
+        author_phid = transaction['author']
+        author_name = self._users[author_phid]['phab_username']
+
+        if transaction['type'] == 'diff-create':
+            return "User {} created diff {}".format(author_name,
+                                                    transaction['diff'])
+
+        elif transaction['type'] == 'diff-create-comment':
+            message = "User {} commented on diff {} with {}".format(author_name,
+                                                                    diff_link,
+                                                                    transaction['comment'])
+            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+
+        elif transaction['type'] == 'diff-update':
+            return "User {} updated diff {}".format(author_name,
+                                                    diff_link)
+        elif transaction['type'] == 'diff-abandon':
+            return "User {} abandoned diff {}".format(author_name,
+                                                      diff_link)
+        elif transaction['type'] == 'diff-reclaim':
+            return "User {} reclaimed diff {}".format(author_name,
+                                                      diff_link)
+        elif transaction['type'] == 'diff-accept':
+            return "{} User {} accepted diff {}".format(owner_mention,
+                                                        author_name,
+                                                        diff_link)
+        elif transaction['type'] == 'diff-request-changes':
+            return "{} User {} requested changes to diff {}".format(owner_mention,
+                                                                    author_name,
+                                                                    diff_link)
+        elif transaction['type'] == 'diff-commandeer':
+            return "User {} took command of diff {}".format(author_name,
+                                                            diff_link)
