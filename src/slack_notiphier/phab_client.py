@@ -87,40 +87,48 @@ class PhabClient:
 
         return results
 
-    def get_link(self, object_id):
-        if object_id.startswith("PHID-TASK-"):
-            task = self._client.maniphest.search(constraints={'phids': [object_id]})
+    def get_link(self, phid):
+        """
+            Returns a link to a task, differential revision, project or repo given its PHID.
+            The link is returned in a format suitable for Slack.
+        """
+        if phid.startswith("PHID-TASK-"):
+            task = self._client.maniphest.search(constraints={'phids': [phid]})
             task_id = task['data'][0]['id']
             task_name = task['data'][0]['fields']['name']
             return "<{}/T{}|T{}>: {}".format(self._url, task_id, task_id, task_name)
 
-        if object_id.startswith("PHID-DREV-"):
-            task = self._client.differential.revision.search(constraints={'phids': [object_id]})
+        if phid.startswith("PHID-DREV-"):
+            task = self._client.differential.revision.search(constraints={'phids': [phid]})
             diff_id = task['data'][0]['id']
             diff_name = task['data'][0]['fields']['title']
             return "<{}/D{}|D{}>: {}".format(self._url, diff_id, diff_id, diff_name)
 
-        if object_id.startswith("PHID-PROJ-"):
-            task = self._client.differential.project.search(constraints={'phids': [object_id]})
+        if phid.startswith("PHID-PROJ-"):
+            task = self._client.differential.project.search(constraints={'phids': [phid]})
             proj_id = task['data'][0]['id']
             proj_name = task['data'][0]['fields']['name']
             return "<{}/project/view/{}|{}>".format(self._url, proj_id, proj_name)
 
-        if object_id.startswith("PHID-REPO-"):
-            task = self._client.diffusion.repository.search(constraints={'phids': [object_id]})
+        if phid.startswith("PHID-REPO-"):
+            task = self._client.diffusion.repository.search(constraints={'phids': [phid]})
             proj_id = task['data'][0]['id']
             proj_name = task['data'][0]['fields']['name']
             return "<{}/source/{}|{}>".format(self._url, proj_id, proj_name)
 
         return None
 
-    def get_owner(self, object_id):
-        if object_id.startswith("PHID-TASK-"):
-            task = self._client.maniphest.search(constraints={'phids': [object_id]})
+    def get_owner(self, phid):
+        """
+            If given a task's PHID, returns the PHID of its owner. If given a differential revision's PHID,
+            it returns its author's PHID.
+        """
+        if phid.startswith("PHID-TASK-"):
+            task = self._client.maniphest.search(constraints={'phids': [phid]})
             return task['data'][0]['fields']['ownerPHID']
 
-        if object_id.startswith("PHID-DREV-"):
-            task = self._client.differential.revision.search(constraints={'phids': [object_id]})
+        if phid.startswith("PHID-DREV-"):
+            task = self._client.differential.revision.search(constraints={'phids': [phid]})
             return task['data'][0]['fields']['authorPHID']
 
         return None
