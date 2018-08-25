@@ -159,6 +159,24 @@ class PhabClient:
                 'author': diff['authorPHID'],
                 'diff': diff['objectPHID']
             }
+        elif diff['type'] == 'accept':
+            yield {
+                'type': 'accept-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
+        elif diff['type'] == 'request-changes':
+            yield {
+                'type': 'request-changes-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
+        elif diff['type'] == 'commandeer':
+            yield {
+                'type': 'commandeer-diff',
+                'author': diff['authorPHID'],
+                'diff': diff['objectPHID']
+            }
         else:
             self._logger.debug(colored("No message will be generated", 'red'))
 
