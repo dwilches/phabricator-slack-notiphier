@@ -1,0 +1,25 @@
+{
+    "object": {
+        "type": "TASK",
+        "phid": "PHID-TASK-vh3d7u6lkqpxgmnquxvp"
+    },
+    "triggers": [
+        {
+            "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+        }
+    ],
+    "action": {
+        "test": false,
+        "silent": false,
+        "secure": false,
+        "epoch": 1535224457
+    },
+    "transactions": [
+        {
+            "phid": "PHID-XACT-TASK-xqbg7zkuea4yn3p"
+        },
+        {
+            "phid": "PHID-XACT-TASK-2j5fiagcruhg2cs"
+        }
+    ]
+}

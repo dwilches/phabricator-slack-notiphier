@@ -54,6 +54,11 @@ class WebhookFirehose:
                                                                                 transaction['task'],
                                                                                 transaction['old'],
                                                                                 transaction['new'])
+        elif transaction['type'] == 'change-priority-task':
+            return "User {} changed the priority of task {} from {} to {}".format(transaction['author'],
+                                                                                  transaction['task'],
+                                                                                  transaction['old'],
+                                                                                  transaction['new'])
         elif transaction['type'] == 'create-repo':
             return "User {} created repo {}".format(transaction['author'],
                                                     transaction['repo'])

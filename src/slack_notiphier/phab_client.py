@@ -108,6 +108,14 @@ class PhabClient:
                 'old': task['fields']['old'],
                 'new': task['fields']['new']
             }
+        elif task['type'] == 'priority':
+            yield {
+                'type': 'change-priority-task',
+                'author': task['authorPHID'],
+                'task': task['objectPHID'],
+                'old': task['fields']['old']['name'],
+                'new': task['fields']['new']['name']
+            }
         else:
             self._logger.debug(colored("No message will be generated", 'red'))
 
