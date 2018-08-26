@@ -5,7 +5,7 @@ from termcolor import colored
 logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 
 
-class Logger:
+class Logger(object):
 
     def __init__(self, class_name):
         self._logger = logging.getLogger(class_name)

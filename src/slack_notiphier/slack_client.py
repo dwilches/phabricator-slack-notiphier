@@ -1,7 +1,7 @@
 
 import os
 
-from slackclient import SlackClient as Slack
+import slackclient
 
 from .logger import Logger
 
@@ -22,7 +22,7 @@ class SlackClient:
             raise Exception("Can't find a token to connect to Slack.")
 
         try:
-            return Slack(token)
+            return slackclient.SlackClient(token)
         except Exception as e:
             self._logger.error("Error connecting to Slack: ", e)
             raise
@@ -32,6 +32,8 @@ class SlackClient:
             Requires this permission in Slack:
                 View the workspace's list of members and their contact information
                 users:read
+
+            Returns: {real_name: slack_user_id}
         """
         self._logger.info("Getting list of users from Slack...")
 
@@ -40,7 +42,9 @@ class SlackClient:
             raise Exception("Couldn't retrieve user list from Slack. Error: " + str(response['error']))
 
         return {user['real_name']: user['id'] for user in response['members']
-                if not user.get('is_bot', True) and user.get('real_name')}
+                if not user.get('is_bot', True)
+                and not user.get('deleted', True)
+                and user.get('real_name')}
 
     def send_message(self, message):
         """

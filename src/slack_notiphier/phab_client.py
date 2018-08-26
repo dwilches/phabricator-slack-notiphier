@@ -3,12 +3,12 @@ import json
 import os
 from urllib.parse import urljoin
 
-from phabricator import Phabricator, APIError
+import phabricator
 
 from .logger import Logger
 
 
-class PhabClient:
+class PhabClient(object):
     """
         Encapsulates all interaction with Phabricator.
     """
@@ -35,12 +35,12 @@ class PhabClient:
             raise Exception("Can't find Phabricator's URL.")
 
         try:
-            client = Phabricator(host=url, token=token)
+            client = phabricator.Phabricator(host=url, token=token)
             # If the RUL is invalid, this health check should find it out
             client.conduit.ping()
             return client
         except Exception as e:
-            self._logger.error("Error connecting to Phabricator. Is the url '{}' valid?: {}", url, e)
+            self._logger.error("Error connecting to Phabricator (url='{}'): {}", url, e)
             raise
 
     def get_users(self):
@@ -52,10 +52,10 @@ class PhabClient:
 
         users = self._client.user.search()
         return {user['phid']: (user['fields']['username'], user['fields']['realName'])
-                for user in users.data
+                for user in users['data']
                 if 'disabled' not in user['fields']['roles'] and
                    'bot' not in user['fields']['roles'] and
-                   user['phid'].startswith('PHID-USER')}
+                   user['type'] == 'USER'}
 
     def get_transactions(self, object_type, object_phid, tx_phids):
         """
@@ -66,7 +66,7 @@ class PhabClient:
         try:
             txs = self._client.transaction.search(objectIdentifier=object_phid,
                                                   constraints=constraints)
-        except APIError as e:
+        except phabricator.APIError as e:
             # Swallow APIErrors related to unimplemented methods
             if "not implemented" in e.message:
                 self._logger.error("Unimplemented method in Phabricator: {}", e)
