@@ -9,86 +9,92 @@ from slack_notiphier.slack_client import SlackClient
 from slack_notiphier.phab_client import PhabClient
 from slack_notiphier.users import Users
 
-PHAB_ENV_VARS = {
-    'NOTIPHIER_PHABRICATOR_URL': 'http://_phab_url_',
-    'NOTIPHIER_PHABRICATOR_TOKEN': '_phab_token_',
-}
 
-SLACK_ENV_VARS = {
-    'NOTIPHIER_SLACK_TOKEN': '_slack_token_',
-    'NOTIPHIER_SLACK_CHANNEL': '_slack_channel_',
-}
+@pytest.fixture
+def fixture_env_vars():
+    return {
+        'NOTIPHIER_PHABRICATOR_URL': 'http://_phab_url_',
+        'NOTIPHIER_PHABRICATOR_TOKEN': '_phab_token_',
+        'NOTIPHIER_SLACK_TOKEN': '_slack_token_',
+        'NOTIPHIER_SLACK_CHANNEL': '_slack_channel_',
+    }
 
-PHAB_USERS = {
-    'data': [
-        {
-            "type": "USER",
-            "phid": "PHID-USER-aa",
-            "fields": {
-                "username": "username-1",
-                "realName": "User Name 1",
-                "roles": ["disabled"],
-            },
-        },
-        {
-            "type": "USER",
-            "phid": "PHID-USER-bb",
-            "fields": {
-                "username": "username-2",
-                "realName": "User Name 2",
-                "roles": [],
-            },
-        },
-        {
-            "type": "USER",
-            "phid": "PHID-USER-cc",
-            "fields": {
-                "username": "username-3",
-                "realName": "User Name 3",
-                "roles": [],
-            },
-        },
-    ]
-}
 
-SLACK_USERS = {
-    'ok': True,
-    'members': [
-        {
-            'id': "SLACK-ID-bb",
-            'real_name': "User Name 2",
-            'is_bot': False,
-            'deleted': False,
-        },
-        {
-            'id': "SLACK-ID-cc",
-            'real_name': "User Name 3",
-            'is_bot': False,
-            'deleted': False,
-        },
-        {
-            'id': "SLACK-ID-dd",
-            'real_name': "User Name 4",
-            'is_bot': False,
-            'deleted': True,
-        },
-        {
-            'id': "SLACK-ID-ee",
-            'real_name': "User Name 5",
-            'is_bot': True,
-            'deleted': False,
-        }
-    ]
-}
+@pytest.fixture
+def fixture_phab_users():
+    return {
+        'data': [
+            {
+                "type": "USER",
+                "phid": "PHID-USER-aa",
+                "fields": {
+                    "username": "username-1",
+                    "realName": "User Name 1",
+                    "roles": ["disabled"],
+                },
+            },
+            {
+                "type": "USER",
+                "phid": "PHID-USER-bb",
+                "fields": {
+                    "username": "username-2",
+                    "realName": "User Name 2",
+                    "roles": [],
+                },
+            },
+            {
+                "type": "USER",
+                "phid": "PHID-USER-cc",
+                "fields": {
+                    "username": "username-3",
+                    "realName": "User Name 3",
+                    "roles": [],
+                },
+            },
+        ]
+    }
+
+
+@pytest.fixture
+def fixture_slack_users():
+    return {
+        'ok': True,
+        'members': [
+            {
+                'id': "SLACK-ID-bb",
+                'real_name': "User Name 2",
+                'is_bot': False,
+                'deleted': False,
+            },
+            {
+                'id': "SLACK-ID-cc",
+                'real_name': "User Name 3",
+                'is_bot': False,
+                'deleted': False,
+            },
+            {
+                'id': "SLACK-ID-dd",
+                'real_name': "User Name 4",
+                'is_bot': False,
+                'deleted': True,
+            },
+            {
+                'id': "SLACK-ID-ee",
+                'real_name': "User Name 5",
+                'is_bot': True,
+                'deleted': False,
+            }
+        ]
+    }
 
 
 @patch("phabricator.Phabricator")
-def test_phab_get_users(Phabricator):
+def test_phab_get_users(Phabricator, fixture_env_vars, fixture_phab_users):
 
     instance = Phabricator.return_value
-    instance.user.search.return_value = PHAB_USERS
+    instance.user.search.return_value = fixture_phab_users
 
-    with patch.dict(os.environ, PHAB_ENV_VARS):
+    with patch.dict(os.environ, fixture_env_vars):
         phab_client = PhabClient()
         users = phab_client.get_users()
 
@@ -102,24 +108,24 @@ def test_phab_get_users(Phabricator):
 
 
 @patch("phabricator.Phabricator")
-def test_wrong_phab_url(Phabricator):
+def test_wrong_phab_url(Phabricator, fixture_env_vars):
 
     instance = Phabricator.return_value
     instance.conduit.ping = MagicMock(side_effect=KeyError('Invalid URL or something'))
     instance.user.search.return_value = []
 
-    with patch.dict(os.environ, PHAB_ENV_VARS):
+    with patch.dict(os.environ, fixture_env_vars):
         with pytest.raises(Exception):
             PhabClient()
 
 
 @patch("slackclient.SlackClient")
-def test_slack_get_users(Slack):
+def test_slack_get_users(Slack, fixture_env_vars, fixture_slack_users):
 
     instance = Slack.return_value
-    instance.api_call.return_value = SLACK_USERS
+    instance.api_call.return_value = fixture_slack_users
 
-    with patch.dict(os.environ, SLACK_ENV_VARS):
+    with patch.dict(os.environ, fixture_env_vars):
         slack_client = SlackClient()
         users = slack_client.get_users()
 
@@ -134,7 +140,7 @@ def test_slack_get_users(Slack):
 
 
 @patch("slackclient.SlackClient")
-def test_wrong_slack_token(Slack):
+def test_wrong_slack_token(Slack, fixture_env_vars):
 
     instance = Slack.return_value
     instance.api_call.return_value = {
@@ -142,7 +148,7 @@ def test_wrong_slack_token(Slack):
         'error': "invalid_auth",
     }
 
-    with patch.dict(os.environ, SLACK_ENV_VARS):
+    with patch.dict(os.environ, fixture_env_vars):
         slack_client = SlackClient()
         with pytest.raises(Exception):
             slack_client.get_users()
@@ -150,16 +156,14 @@ def test_wrong_slack_token(Slack):
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def test_get_users(Phabricator, Slack):
+def test_get_users(Phabricator, Slack, fixture_env_vars, fixture_phab_users, fixture_slack_users):
 
     instance = Phabricator.return_value
-    instance.user.search.return_value = PHAB_USERS
+    instance.user.search.return_value = fixture_phab_users
     instance = Slack.return_value
-    instance.api_call.return_value = SLACK_USERS
+    instance.api_call.return_value = fixture_slack_users
 
-    all_vars = SLACK_ENV_VARS.copy()
-    all_vars.update(PHAB_ENV_VARS)
-    with patch.dict(os.environ, all_vars):
+    with patch.dict(os.environ, fixture_env_vars):
         phab_client = PhabClient()
         slack_client = SlackClient()
         users = Users(phab_client, slack_client)
@@ -188,16 +192,14 @@ def test_get_users(Phabricator, Slack):
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def test_mention_users(Phabricator, Slack):
+def test_mention_users(Phabricator, Slack, fixture_env_vars, fixture_phab_users, fixture_slack_users):
 
     instance = Phabricator.return_value
-    instance.user.search.return_value = PHAB_USERS
+    instance.user.search.return_value = fixture_phab_users
     instance = Slack.return_value
-    instance.api_call.return_value = SLACK_USERS
+    instance.api_call.return_value = fixture_slack_users
 
-    all_vars = SLACK_ENV_VARS.copy()
-    all_vars.update(PHAB_ENV_VARS)
-    with patch.dict(os.environ, all_vars):
+    with patch.dict(os.environ, fixture_env_vars):
         phab_client = PhabClient()
         slack_client = SlackClient()
         users = Users(phab_client, slack_client)
