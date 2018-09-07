@@ -32,7 +32,7 @@ class WebhookFirehose:
         object_type = request['object']['type']
         object_phid = request['object']['phid']
 
-        self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
+        #self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
 
         transactions = self._get_transactions(object_type, object_phid, request['transactions'])
         self._handle_transactions(object_type, transactions)
@@ -137,10 +137,15 @@ class WebhookFirehose:
         diff_link = self._phab_client.get_link(transaction['diff'])
 
         owner_phid = self._phab_client.get_owner(transaction['diff'])
+        author_phid = transaction['author']
+
+        if not self._users[owner_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(owner_phid))
+        if not self._users[author_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(author_phid))
+
         owner_name = self._users[owner_phid]['phab_username']
         owner_mention = self._users.get_mention(owner_phid)
-
-        author_phid = transaction['author']
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'diff-create':

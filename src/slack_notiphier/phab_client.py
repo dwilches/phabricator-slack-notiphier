@@ -74,7 +74,7 @@ class PhabClient(object):
             raise
 
         results = []
-        for t in txs.data:
+        for t in txs["data"]:
             self._logger.debug("Transaction:\n{}", json.dumps(t, indent=4))
 
             # These types are as sent by Phabricator's Firehose Webhook
