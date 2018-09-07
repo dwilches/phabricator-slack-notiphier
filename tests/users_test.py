@@ -28,8 +28,8 @@ def fixture_phab_users():
                 "type": "USER",
                 "phid": "PHID-USER-aa",
                 "fields": {
-                    "username": "username-1",
-                    "realName": "User Name 1",
+                    "username": "ph-username-aa",
+                    "realName": "PH Username AA",
                     "roles": ["disabled"],
                 },
             },
@@ -37,8 +37,8 @@ def fixture_phab_users():
                 "type": "USER",
                 "phid": "PHID-USER-bb",
                 "fields": {
-                    "username": "username-2",
-                    "realName": "User Name 2",
+                    "username": "ph-username-bb",
+                    "realName": "User Name BB",
                     "roles": [],
                 },
             },
@@ -46,8 +46,8 @@ def fixture_phab_users():
                 "type": "USER",
                 "phid": "PHID-USER-cc",
                 "fields": {
-                    "username": "username-3",
-                    "realName": "User Name 3",
+                    "username": "ph-username-cc",
+                    "realName": "User Name CC",
                     "roles": [],
                 },
             },
@@ -62,25 +62,25 @@ def fixture_slack_users():
         'members': [
             {
                 'id': "SLACK-ID-bb",
-                'real_name': "User Name 2",
+                'real_name': "User Name BB",
                 'is_bot': False,
                 'deleted': False,
             },
             {
                 'id': "SLACK-ID-cc",
-                'real_name': "User Name 3",
+                'real_name': "User Name CC",
                 'is_bot': False,
                 'deleted': False,
             },
             {
                 'id': "SLACK-ID-dd",
-                'real_name': "User Name 4",
+                'real_name': "User Name DD",
                 'is_bot': False,
                 'deleted': True,
             },
             {
                 'id': "SLACK-ID-ee",
-                'real_name': "User Name 5",
+                'real_name': "User Name EE",
                 'is_bot': True,
                 'deleted': False,
             }
@@ -102,8 +102,8 @@ def test_phab_get_users(Phabricator, fixture_env_vars, fixture_phab_users):
         Phabricator.assert_called_with(host='http://_phab_url_/api/', token='_phab_token_')
 
         assert users == {
-            'PHID-USER-bb': ('username-2', 'User Name 2'),
-            'PHID-USER-cc': ('username-3', 'User Name 3')
+            'PHID-USER-bb': ('ph-username-bb', 'User Name BB'),
+            'PHID-USER-cc': ('ph-username-cc', 'User Name CC')
         }
 
 
@@ -134,8 +134,8 @@ def test_slack_get_users(Slack, fixture_env_vars, fixture_slack_users):
         instance.api_call.assert_called_with("users.list")
 
         assert users == {
-            "User Name 2": "SLACK-ID-bb",
-            "User Name 3": "SLACK-ID-cc",
+            "User Name BB": "SLACK-ID-bb",
+            "User Name CC": "SLACK-ID-cc",
         }
 
 
@@ -170,23 +170,23 @@ def test_get_users(Phabricator, Slack, fixture_env_vars, fixture_phab_users, fix
         instance.api_call.assert_called_with("users.list")
 
         expected_user_2 = {
-            'phab_username': "username-2",
+            'phab_username': "ph-username-bb",
             'phid': "PHID-USER-bb",
             'slack_id': "SLACK-ID-bb",
         }
         expected_user_3 = {
-            'phab_username': "username-3",
+            'phab_username': "ph-username-cc",
             'phid': "PHID-USER-cc",
             'slack_id': "SLACK-ID-cc",
         }
 
         assert expected_user_2 == users["PHID-USER-bb"]
-        assert expected_user_2 == users["username-2"]
+        assert expected_user_2 == users["ph-username-bb"]
         assert expected_user_3 == users["PHID-USER-cc"]
-        assert expected_user_3 == users["username-3"]
+        assert expected_user_3 == users["ph-username-cc"]
 
         assert users["PHID-USER-aa"] is None
-        assert users["username-1"] is None
+        assert users["ph-username-aa"] is None
         assert users["non-existent"] is None
 
 
@@ -207,5 +207,5 @@ def test_mention_users(Phabricator, Slack, fixture_env_vars, fixture_phab_users,
 
         assert users.get_mention("PHID-USER-bb") == "<@SLACK-ID-bb>"
         assert users.get_mention("PHID-USER-cc") == "<@SLACK-ID-cc>"
-        assert users.get_mention("username-2") == "<@SLACK-ID-bb>"
-        assert users.get_mention("username-3") == "<@SLACK-ID-cc>"
+        assert users.get_mention("ph-username-bb") == "<@SLACK-ID-bb>"
+        assert users.get_mention("ph-username-cc") == "<@SLACK-ID-cc>"
