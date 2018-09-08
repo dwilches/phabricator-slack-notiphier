@@ -114,9 +114,11 @@ def _execute_test_from_file(test_filename, Phabricator, Slack):
         # invoked with the right message.
         try:
             webhook.handle(test_spec["request"])
-            instance_slack.api_call.assert_called_with("chat.postMessage",
-                                                       channel="_slack_channel_",
-                                                       text=test_spec["expected_response"])
+
+            for expected in test_spec["expected_responses"]:
+                instance_slack.api_call.assert_any_call("chat.postMessage",
+                                                        channel="_slack_channel_",
+                                                        text=expected)
         except Exception as e:
             print("Exception in test. Some information about attempted calls:", instance_phab.mock_calls)
             raise e
@@ -154,16 +156,21 @@ def test_welcome_message(Phabricator, Slack):
         Asserts we send the initial welcome message to Slack when the webhook starts running.
     """
 
-    instance = Phabricator.return_value
-    instance.user.search.return_value = _fixture_phab_users()
-    instance = Slack.return_value
-    instance.api_call.side_effect = _mock_slack_api_call
+    phab_instance = Phabricator.return_value
+    phab_instance.user.search.return_value = _fixture_phab_users()
+
+    slack_instance = Slack.return_value
+    slack_instance.api_call.side_effect = _mock_slack_api_call
 
     with patch.dict(os.environ, _fixture_env_vars()):
         WebhookFirehose()
-        instance.api_call.assert_called_with("chat.postMessage",
-                                             channel="_slack_channel_",
-                                             text="Slack Notiphier started running.")
+        slack_instance.api_call.assert_called_with("chat.postMessage",
+                                                   channel="_slack_channel_",
+                                                   text="Slack Notiphier started running.")
+
+
+def test_diff_create():
+    _execute_test_from_file("diff-create.json")
 
 
 def test_diff_abandon():
@@ -192,4 +199,3 @@ def test_diff_add_comment():
 
 def test_diff_add_comment_own():
     _execute_test_from_file("diff-add-comment-own.json")
-

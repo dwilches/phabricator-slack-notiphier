@@ -1,0 +1,196 @@
+{
+    "request": {
+        "object": {
+            "type": "DREV",
+            "phid": "PHID-DREV-627i7l6ala25ktaxhasf"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1535087828
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-DREV-obva6j7gaiz3ohd"
+            },
+            {
+                "phid": "PHID-XACT-DREV-putceaqvf7b4i3w"
+            },
+            {
+                "phid": "PHID-XACT-DREV-5bcesszxujyrhje"
+            },
+            {
+                "phid": "PHID-XACT-DREV-nnkalmssuz7a5pm"
+            },
+            {
+                "phid": "PHID-XACT-DREV-kiecb5kmblzeyyd"
+            },
+            {
+                "phid": "PHID-XACT-DREV-ylpyom6fb7dhazu"
+            },
+            {
+                "phid": "PHID-XACT-DREV-emzr2quw7b4a7eh"
+            }
+        ]
+    },
+    "expected_responses": [
+        "User ph-username-bb created diff <http://_phab_url_/D123|D123>: Name Diff D123",
+        "User ph-username-bb updated diff <http://_phab_url_/D123|D123>: Name Diff D123"
+    ],
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-DREV-627i7l6ala25ktaxhasf",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-DREV-obva6j7gaiz3ohd",
+                            "PHID-XACT-DREV-putceaqvf7b4i3w",
+                            "PHID-XACT-DREV-5bcesszxujyrhje",
+                            "PHID-XACT-DREV-nnkalmssuz7a5pm",
+                            "PHID-XACT-DREV-kiecb5kmblzeyyd",
+                            "PHID-XACT-DREV-ylpyom6fb7dhazu",
+                            "PHID-XACT-DREV-emzr2quw7b4a7eh"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 7,
+                            "phid": "PHID-XACT-DREV-obva6j7gaiz3ohd",
+                            "type": null,
+                            "authorPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 6,
+                            "phid": "PHID-XACT-DREV-putceaqvf7b4i3w",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 5,
+                            "phid": "PHID-XACT-DREV-5bcesszxujyrhje",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 4,
+                            "phid": "PHID-XACT-DREV-nnkalmssuz7a5pm",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 3,
+                            "phid": "PHID-XACT-DREV-kiecb5kmblzeyyd",
+                            "type": "title",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {
+                                "old": "",
+                                "new": "baba"
+                            }
+                        },
+                        {
+                            "id": 2,
+                            "phid": "PHID-XACT-DREV-ylpyom6fb7dhazu",
+                            "type": "update",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {
+                                "old": null,
+                                "new": "PHID-DIFF-dmtx5e2i2igb2ndiqyp7",
+                                "commitPHIDs": []
+                            }
+                        },
+                        {
+                            "id": 1,
+                            "phid": "PHID-XACT-DREV-emzr2quw7b4a7eh",
+                            "type": "create",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535087827,
+                            "dateModified": 1535087827,
+                            "comments": [],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "differential.revision.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-DREV-627i7l6ala25ktaxhasf"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 123,
+                            "type": "DREV",
+                            "phid": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "fields": {
+                                "title": "Name Diff D123",
+                                "authorPHID": "PHID-USER-cc",
+                                "status": {
+                                    "value": "needs-revision",
+                                    "name": "Needs Revision",
+                                    "closed": false,
+                                    "color.ansi": "red"
+                                },
+                                "repositoryPHID": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                                "diffPHID": "PHID-DIFF-clao6zltngounnpwqup3",
+                                "summary": "xyz",
+                                "testPlan": "abc",
+                                "dateCreated": 1535087827,
+                                "dateModified": 1535232597,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
+

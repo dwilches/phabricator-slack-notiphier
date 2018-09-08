@@ -21,7 +21,9 @@
             }
         ]
     },
-    "expected_response": "User ph-username-bb commented on diff <http://_phab_url_/D123|D123>: Name Diff D123 with Comment ABC",
+    "expected_responses": [
+        "User ph-username-bb commented on diff <http://_phab_url_/D123|D123>: Name Diff D123 with Comment ABC"
+    ],
     "mocked_phab_calls": {
         "transaction.search": [
             {

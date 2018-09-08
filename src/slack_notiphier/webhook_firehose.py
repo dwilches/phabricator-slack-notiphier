@@ -150,7 +150,7 @@ class WebhookFirehose:
 
         if transaction['type'] == 'diff-create':
             return "User {} created diff {}".format(author_name,
-                                                    transaction['diff'])
+                                                    diff_link)
 
         elif transaction['type'] == 'diff-create-comment':
             message = "User {} commented on diff {} with {}".format(author_name,

@@ -24,7 +24,9 @@
             }
         ]
     },
-    "expected_response": "<@SLACK-ID-cc> User ph-username-bb took command of diff <http://_phab_url_/D123|D123>: Name Diff D123",
+    "expected_responses": [
+        "<@SLACK-ID-cc> User ph-username-bb took command of diff <http://_phab_url_/D123|D123>: Name Diff D123"
+    ],
     "mocked_phab_calls": {
         "transaction.search": [
             {
