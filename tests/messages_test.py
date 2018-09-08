@@ -173,6 +173,10 @@ def test_diff_create():
     _execute_test_from_file("diff-create.json")
 
 
+def test_diff_update():
+    _execute_test_from_file("diff-update.json")
+
+
 def test_diff_abandon():
     _execute_test_from_file("diff-abandon.json")
 
