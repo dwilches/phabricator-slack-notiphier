@@ -13,7 +13,7 @@ from slack_notiphier.webhook_firehose import WebhookFirehose
 
 
 @pytest.fixture
-def fixture_env_vars():
+def _fixture_env_vars():
     return {
         'NOTIPHIER_PHABRICATOR_URL': 'http://_phab_url_',
         'NOTIPHIER_PHABRICATOR_TOKEN': '_phab_token_',
@@ -23,7 +23,7 @@ def fixture_env_vars():
 
 
 @pytest.fixture
-def fixture_phab_users():
+def _fixture_phab_users():
     return {
         'data': [
             {
@@ -58,7 +58,7 @@ def fixture_phab_users():
 
 
 @pytest.fixture
-def fixture_slack_users():
+def _fixture_slack_users():
     return {
         'ok': True,
         'members': [
@@ -92,45 +92,21 @@ def fixture_slack_users():
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def test_welcome_message(Phabricator, Slack, fixture_env_vars, fixture_phab_users, fixture_slack_users):
-    """
-        Simple test to ensure everything is correctly wired.
-        Asserts we send the initial welcome message to Slack when the webhook starts running.
-    """
-
-    instance = Phabricator.return_value
-    instance.user.search.return_value = fixture_phab_users
-    instance = Slack.return_value
-    instance.api_call.side_effect = mock_slack_api_call
-
-    with patch.dict(os.environ, fixture_env_vars):
-        WebhookFirehose()
-        instance.api_call.assert_called_with("chat.postMessage",
-                                             channel="_slack_channel_",
-                                             text="Slack Notiphier started running.")
-
-
-def test_abandon_diff():
-    execute_test_from_file("abandon-diff.json")
-
-
-@patch("slackclient.SlackClient")
-@patch("phabricator.Phabricator")
-def execute_test_from_file(test_filename, Phabricator, Slack):
-    with patch.dict(os.environ, fixture_env_vars()), open("../tests/resources/" + test_filename, 'r') as fp_test_spec:
+def _execute_test_from_file(test_filename, Phabricator, Slack):
+    with patch.dict(os.environ, _fixture_env_vars()), open("../tests/resources/" + test_filename, 'r') as fp_test_spec:
         test_spec = json.load(fp_test_spec)
 
         # Mock Phabricator calls
         instance_phab = Phabricator.return_value
-        instance_phab.user.search.return_value = fixture_phab_users()
-        instance_phab.transaction.search.side_effect = mock_phab_call("transaction.search",
-                                                                      test_spec["mocked_phab_calls"])
-        instance_phab.differential.revision.search.side_effect = mock_phab_call("differential.revision.search",
-                                                                                test_spec["mocked_phab_calls"])
+        instance_phab.user.search.return_value = _fixture_phab_users()
+        instance_phab.transaction.search.side_effect = _mock_phab_call("transaction.search",
+                                                                       test_spec["mocked_phab_calls"])
+        instance_phab.differential.revision.search.side_effect = _mock_phab_call("differential.revision.search",
+                                                                                 test_spec["mocked_phab_calls"])
 
         # Mock Slack calls
         instance_slack = Slack.return_value
-        instance_slack.api_call.side_effect = mock_slack_api_call
+        instance_slack.api_call.side_effect = _mock_slack_api_call
 
         webhook = WebhookFirehose()
 
@@ -146,7 +122,7 @@ def execute_test_from_file(test_filename, Phabricator, Slack):
             raise e
 
 
-def mock_phab_call(method, mocked_phab_calls):
+def _mock_phab_call(method, mocked_phab_calls):
 
     def inner_phab_call_handler(*args, **kwargs):
         for expected_call in mocked_phab_calls[method]:
@@ -159,12 +135,41 @@ def mock_phab_call(method, mocked_phab_calls):
     return inner_phab_call_handler
 
 
-def mock_slack_api_call(method, *args, **kwargs):
+def _mock_slack_api_call(method, *args, **kwargs):
     if method == "users.list":
-        return fixture_slack_users()
+        return _fixture_slack_users()
 
     if method == "chat.postMessage":
         return {'ok': True}
 
     raise ValueError("Invalid invocation to mocked slack_api_call: api_call({}, args={}, kwargs={})"
                      .format(method, args, kwargs))
+
+
+@patch("slackclient.SlackClient")
+@patch("phabricator.Phabricator")
+def test_welcome_message(Phabricator, Slack):
+    """
+        Simple test to ensure everything is correctly wired.
+        Asserts we send the initial welcome message to Slack when the webhook starts running.
+    """
+
+    instance = Phabricator.return_value
+    instance.user.search.return_value = _fixture_phab_users()
+    instance = Slack.return_value
+    instance.api_call.side_effect = _mock_slack_api_call
+
+    with patch.dict(os.environ, _fixture_env_vars()):
+        WebhookFirehose()
+        instance.api_call.assert_called_with("chat.postMessage",
+                                             channel="_slack_channel_",
+                                             text="Slack Notiphier started running.")
+
+
+def test_abandon_diff():
+    _execute_test_from_file("abandon-diff.json")
+
+
+def test_accept_diff():
+    _execute_test_from_file("accept-diff.json")
+
