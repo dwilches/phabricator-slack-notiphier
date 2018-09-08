@@ -181,8 +181,9 @@ class WebhookFirehose:
                                                                     diff_link)
 
         elif transaction['type'] == 'diff-commandeer':
-            return "User {} took command of diff {}".format(author_name,
-                                                            diff_link)
+            return "{} User {} took command of diff {}".format(owner_mention,
+                                                               author_name,
+                                                               diff_link)
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 

@@ -1,0 +1,113 @@
+{
+    "request": {
+        "object": {
+            "type": "DREV",
+            "phid": "PHID-DREV-627i7l6ala25ktaxhasf"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1535219075
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-DREV-ogcod24x6m3ewx4"
+            },
+            {
+                "phid": "PHID-XACT-DREV-c2q7zxnw2geuruz"
+            }
+        ]
+    },
+    "expected_response": "<@SLACK-ID-cc> User ph-username-bb requested changes to diff <http://_phab_url_/D123|D123>: Name Diff D123",
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-DREV-627i7l6ala25ktaxhasf",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-DREV-ogcod24x6m3ewx4",
+                            "PHID-XACT-DREV-c2q7zxnw2geuruz"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 25,
+                            "phid": "PHID-XACT-DREV-ogcod24x6m3ewx4",
+                            "type": "status",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535219074,
+                            "dateModified": 1535219074,
+                            "comments": [],
+                            "fields": {
+                                "old": "accepted",
+                                "new": "needs-revision"
+                            }
+                        },
+                        {
+                            "id": 24,
+                            "phid": "PHID-XACT-DREV-c2q7zxnw2geuruz",
+                            "type": "request-changes",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535219074,
+                            "dateModified": 1535219074,
+                            "comments": [],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "differential.revision.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-DREV-627i7l6ala25ktaxhasf"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 123,
+                            "type": "DREV",
+                            "phid": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "fields": {
+                                "title": "Name Diff D123",
+                                "authorPHID": "PHID-USER-cc",
+                                "status": {
+                                    "value": "needs-revision",
+                                    "name": "Needs Revision",
+                                    "closed": false,
+                                    "color.ansi": "red"
+                                },
+                                "repositoryPHID": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                                "diffPHID": "PHID-DIFF-clao6zltngounnpwqup3",
+                                "summary": "xyz",
+                                "testPlan": "abc",
+                                "dateCreated": 1535087827,
+                                "dateModified": 1535232597,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

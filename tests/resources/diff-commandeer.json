@@ -1,0 +1,110 @@
+{
+    "request": {
+        "object": {
+            "type": "DREV",
+            "phid": "PHID-DREV-627i7l6ala25ktaxhasf"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1535219226
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-DREV-qv7tqedpwcq25vr"
+            },
+            {
+                "phid": "PHID-XACT-DREV-jw2lbfp6cge3erh"
+            }
+        ]
+    },
+    "expected_response": "<@SLACK-ID-cc> User ph-username-bb took command of diff <http://_phab_url_/D123|D123>: Name Diff D123",
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-DREV-627i7l6ala25ktaxhasf",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-DREV-qv7tqedpwcq25vr",
+                            "PHID-XACT-DREV-jw2lbfp6cge3erh"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 35,
+                            "phid": "PHID-XACT-DREV-qv7tqedpwcq25vr",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535219225,
+                            "dateModified": 1535219225,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 34,
+                            "phid": "PHID-XACT-DREV-jw2lbfp6cge3erh",
+                            "type": "commandeer",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535219225,
+                            "dateModified": 1535219225,
+                            "comments": [],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "differential.revision.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-DREV-627i7l6ala25ktaxhasf"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 123,
+                            "type": "DREV",
+                            "phid": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "fields": {
+                                "title": "Name Diff D123",
+                                "authorPHID": "PHID-USER-cc",
+                                "status": {
+                                    "value": "needs-revision",
+                                    "name": "Needs Revision",
+                                    "closed": false,
+                                    "color.ansi": "red"
+                                },
+                                "repositoryPHID": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                                "diffPHID": "PHID-DIFF-clao6zltngounnpwqup3",
+                                "summary": "xyz",
+                                "testPlan": "abc",
+                                "dateCreated": 1535087827,
+                                "dateModified": 1535232597,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

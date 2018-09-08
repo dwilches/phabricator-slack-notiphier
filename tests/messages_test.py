@@ -166,10 +166,30 @@ def test_welcome_message(Phabricator, Slack):
                                              text="Slack Notiphier started running.")
 
 
-def test_abandon_diff():
-    _execute_test_from_file("abandon-diff.json")
+def test_diff_abandon():
+    _execute_test_from_file("diff-abandon.json")
 
 
-def test_accept_diff():
-    _execute_test_from_file("accept-diff.json")
+def test_diff_reclaim():
+    _execute_test_from_file("diff-reclaim.json")
+
+
+def test_diff_accept():
+    _execute_test_from_file("diff-accept.json")
+
+
+def test_diff_request_changes():
+    _execute_test_from_file("diff-request-changes.json")
+
+
+def test_diff_commandeer():
+    _execute_test_from_file("diff-commandeer.json")
+
+
+def test_diff_add_comment():
+    _execute_test_from_file("diff-add-comment.json")
+
+
+def test_diff_add_comment_own():
+    _execute_test_from_file("diff-add-comment-own.json")
 
