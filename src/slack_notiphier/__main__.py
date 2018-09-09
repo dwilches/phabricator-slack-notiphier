@@ -23,5 +23,10 @@ def phab_webhook_firehose():
     return "OK\n"
 
 
+@app.route('/health')
+def health():
+    return "OK\n"
+
+
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False, host='0.0.0.0')
