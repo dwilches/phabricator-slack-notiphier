@@ -109,7 +109,7 @@ class PhabClient(object):
             return "<{}/D{}|D{}>: {}".format(self._url, diff_id, diff_id, diff_name)
 
         if phid.startswith("PHID-PROJ-"):
-            task = self._client.differential.project.search(constraints={'phids': [phid]})
+            task = self._client.project.search(constraints={'phids': [phid]})
             proj_id = task['data'][0]['id']
             proj_name = task['data'][0]['fields']['name']
             return "<{}/project/view/{}|{}>".format(self._url, proj_id, proj_name)

@@ -1,34 +1,162 @@
 {
-    "object": {
-        "type": "PROJ",
-        "phid": "PHID-PROJ-p5je4exyqjacndsavolp"
+    "request": {
+        "object": {
+            "type": "PROJ",
+            "phid": "PHID-PROJ-p5je4exyqjacndsavolp"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1535089206
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-PROJ-mzpst7ienafipnj"
+            },
+            {
+                "phid": "PHID-XACT-PROJ-yrg5trnsthouj7l"
+            },
+            {
+                "phid": "PHID-XACT-PROJ-ttzcoigznzzypil"
+            },
+            {
+                "phid": "PHID-XACT-PROJ-yw2nyvrl4ujeeuh"
+            },
+            {
+                "phid": "PHID-XACT-PROJ-d3ypzxusa2iw6gj"
+            }
+        ]
     },
-    "triggers": [
-        {
-            "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
-        }
+    "expected_responses": [
+        "User ph-username-bb created project <http://_phab_url_/project/view/1|Repo Name>"
     ],
-    "action": {
-        "test": false,
-        "silent": false,
-        "secure": false,
-        "epoch": 1535089206
-    },
-    "transactions": [
-        {
-            "phid": "PHID-XACT-PROJ-mzpst7ienafipnj"
-        },
-        {
-            "phid": "PHID-XACT-PROJ-yrg5trnsthouj7l"
-        },
-        {
-            "phid": "PHID-XACT-PROJ-ttzcoigznzzypil"
-        },
-        {
-            "phid": "PHID-XACT-PROJ-yw2nyvrl4ujeeuh"
-        },
-        {
-            "phid": "PHID-XACT-PROJ-d3ypzxusa2iw6gj"
-        }
-    ]
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-PROJ-p5je4exyqjacndsavolp",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-PROJ-mzpst7ienafipnj",
+                            "PHID-XACT-PROJ-yrg5trnsthouj7l",
+                            "PHID-XACT-PROJ-ttzcoigznzzypil",
+                            "PHID-XACT-PROJ-yw2nyvrl4ujeeuh",
+                            "PHID-XACT-PROJ-d3ypzxusa2iw6gj"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 5,
+                            "phid": "PHID-XACT-PROJ-mzpst7ienafipnj",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-PROJ-p5je4exyqjacndsavolp",
+                            "dateCreated": 1535089205,
+                            "dateModified": 1535089205,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 4,
+                            "phid": "PHID-XACT-PROJ-yrg5trnsthouj7l",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-PROJ-p5je4exyqjacndsavolp",
+                            "dateCreated": 1535089205,
+                            "dateModified": 1535089205,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 3,
+                            "phid": "PHID-XACT-PROJ-ttzcoigznzzypil",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-PROJ-p5je4exyqjacndsavolp",
+                            "dateCreated": 1535089205,
+                            "dateModified": 1535089205,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 2,
+                            "phid": "PHID-XACT-PROJ-yw2nyvrl4ujeeuh",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-PROJ-p5je4exyqjacndsavolp",
+                            "dateCreated": 1535089205,
+                            "dateModified": 1535089205,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 1,
+                            "phid": "PHID-XACT-PROJ-d3ypzxusa2iw6gj",
+                            "type": "create",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-PROJ-p5je4exyqjacndsavolp",
+                            "dateCreated": 1535089205,
+                            "dateModified": 1535089205,
+                            "comments": [],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "project.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-PROJ-p5je4exyqjacndsavolp"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 1,
+                            "type": "PROJ",
+                            "phid": "PHID-PROJ-p5je4exyqjacndsavolp",
+                            "fields": {
+                                "name": "Repo Name",
+                                "slug": "reponame",
+                                "milestone": null,
+                                "depth": 0,
+                                "parent": null,
+                                "icon": {
+                                    "key": "project",
+                                    "name": "Project",
+                                    "icon": "fa-briefcase"
+                                },
+                                "color": {
+                                    "key": "blue",
+                                    "name": "Blue"
+                                },
+                                "spacePHID": null,
+                                "dateCreated": 1535089205,
+                                "dateModified": 1535089205,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "users",
+                                    "join": "users"
+                                },
+                                "description": null
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
 }

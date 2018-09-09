@@ -105,6 +105,10 @@ def _execute_test_from_file(test_filename, Phabricator, Slack):
                                                                                  test_spec["mocked_phab_calls"])
         instance_phab.maniphest.search.side_effect = _mock_phab_call("maniphest.search",
                                                                      test_spec["mocked_phab_calls"])
+        instance_phab.project.search.side_effect = _mock_phab_call("project.search",
+                                                                   test_spec["mocked_phab_calls"])
+        instance_phab.diffusion.repository.search.side_effect = _mock_phab_call("diffusion.repository.search",
+                                                                                test_spec["mocked_phab_calls"])
 
         # Mock Slack calls
         instance_slack = Slack.return_value
@@ -253,3 +257,15 @@ def test_diff_add_comment():
 
 def test_diff_add_comment_own():
     _execute_test_from_file("diff-add-comment-own.json")
+
+
+# Project Tests
+
+def test_proj_create():
+    _execute_test_from_file("proj-create.json")
+
+
+# Repository Tests
+
+def test_repo_create():
+    _execute_test_from_file("repo-create.json")

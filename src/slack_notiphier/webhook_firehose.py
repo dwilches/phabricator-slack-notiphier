@@ -201,6 +201,10 @@ class WebhookFirehose:
         proj_link = self._phab_client.get_link(transaction['proj'])
 
         author_phid = transaction['author']
+
+        if not self._users[author_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(author_phid))
+
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'proj-create':
@@ -217,6 +221,10 @@ class WebhookFirehose:
         repo_link = self._phab_client.get_link(transaction['repo'])
 
         author_phid = transaction['author']
+
+        if not self._users[author_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(author_phid))
+
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'repo-create':

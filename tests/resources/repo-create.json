@@ -1,28 +1,124 @@
 {
-    "object": {
-        "type": "REPO",
-        "phid": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr"
+    "request": {
+        "object": {
+            "type": "REPO",
+            "phid": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1535085583
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-REPO-lvpzbe5lmjndqmp"
+            },
+            {
+                "phid": "PHID-XACT-REPO-jnjslr52s2asuzl"
+            },
+            {
+                "phid": "PHID-XACT-REPO-lop4qwdd64j5hqz"
+            }
+        ]
     },
-    "triggers": [
-        {
-            "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
-        }
+    "expected_responses": [
+        "User ph-username-bb created repository <http://_phab_url_/source/4|Repo Name>"
     ],
-    "action": {
-        "test": false,
-        "silent": false,
-        "secure": false,
-        "epoch": 1535085583
-    },
-    "transactions": [
-        {
-            "phid": "PHID-XACT-REPO-lvpzbe5lmjndqmp"
-        },
-        {
-            "phid": "PHID-XACT-REPO-jnjslr52s2asuzl"
-        },
-        {
-            "phid": "PHID-XACT-REPO-lop4qwdd64j5hqz"
-        }
-    ]
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-REPO-lvpzbe5lmjndqmp",
+                            "PHID-XACT-REPO-jnjslr52s2asuzl",
+                            "PHID-XACT-REPO-lop4qwdd64j5hqz"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 22,
+                            "phid": "PHID-XACT-REPO-lvpzbe5lmjndqmp",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr",
+                            "dateCreated": 1535085582,
+                            "dateModified": 1535085582,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 21,
+                            "phid": "PHID-XACT-REPO-jnjslr52s2asuzl",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr",
+                            "dateCreated": 1535085582,
+                            "dateModified": 1535085582,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 20,
+                            "phid": "PHID-XACT-REPO-lop4qwdd64j5hqz",
+                            "type": "create",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr",
+                            "dateCreated": 1535085582,
+                            "dateModified": 1535085582,
+                            "comments": [],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "diffusion.repository.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-REPO-q6xsjvfn5hkzfcqfbdfr"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 4,
+                            "type": "REPO",
+                            "phid": "PHID-REPO-q6xsjvfn5hkzfcqfbdfr",
+                            "fields": {
+                                "name": "Repo Name",
+                                "vcs": "git",
+                                "callsign": null,
+                                "shortName": null,
+                                "status": "active",
+                                "isImporting": false,
+                                "spacePHID": null,
+                                "dateCreated": 1535085582,
+                                "dateModified": 1535086298,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "admin",
+                                    "diffusion.push": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
 }
+
