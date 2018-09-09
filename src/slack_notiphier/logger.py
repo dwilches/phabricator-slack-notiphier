@@ -2,7 +2,21 @@
 import logging
 from termcolor import colored
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+from .config import get_config
+
+
+_valid_levels = {
+    'DEBUG': logging.DEBUG,
+    'INFO': logging.INFO,
+    'WARN': logging.WARN,
+    'ERROR': logging.ERROR,
+}
+
+_log_level = get_config('log_level', 'INFO')
+if _log_level not in _valid_levels:
+    raise ValueError("Configured log level is not valid: " + _log_level)
+
+logging.basicConfig(level=_valid_levels[_log_level], format='%(message)s')
 
 
 class Logger(object):
