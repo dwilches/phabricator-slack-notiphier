@@ -1,6 +1,8 @@
 
 import json
 import re
+import textwrap
+import traceback
 
 from .users import Users
 from .logger import Logger
@@ -39,13 +41,22 @@ class WebhookFirehose:
             Handle a single request from one of Phabricator's Firehose webhooks.
             It extracts the relevant data and sends the message to Slack.
         """
-        object_type = request['object']['type']
-        object_phid = request['object']['phid']
+        try:
+            object_type = request['object']['type']
+            object_phid = request['object']['phid']
 
-        self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
+            self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
 
-        transactions = self._get_transactions(object_type, object_phid, request['transactions'])
-        self._handle_transactions(object_type, transactions)
+            transactions = self._get_transactions(object_type, object_phid, request['transactions'])
+            self._handle_transactions(object_type, transactions)
+        except Exception as e:
+            message = textwrap.dedent("""
+                *Exception in Slack-Notiphier:* {}
+                *Original message:* {}
+                *Stacktrace:*
+                {}
+                """).format(e, request, textwrap.indent(traceback.format_exc(), "        "))
+            self._slack_client.send_message(message)
 
     def _get_transactions(self, object_type, object_phid, wrapped_phids):
         """
