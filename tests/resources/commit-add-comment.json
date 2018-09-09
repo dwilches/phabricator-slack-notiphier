@@ -1,0 +1,160 @@
+{
+    "request": {
+        "object": {
+            "type": "CMIT",
+            "phid": "PHID-CMIT-hhxrbsi7hqdx437bmssd"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1536464284
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-CMIT-z2aoswq5yw3djsb"
+            }
+        ]
+    },
+    "expected_responses": [
+        "User ph-username-bb created commit <https://phabricator.dwilches.com/R3:d988f886f4a4563630f1a6b3f49ccb59c98c311b|Make Flask listen on all interfaces> on repository SlackNotiphier"
+    ],
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-CMIT-hhxrbsi7hqdx437bmssd",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-CMIT-z2aoswq5yw3djsb"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 39,
+                            "phid": "PHID-XACT-CMIT-z2aoswq5yw3djsb",
+                            "type": "comment",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-CMIT-hhxrbsi7hqdx437bmssd",
+                            "dateCreated": 1536464283,
+                            "dateModified": 1536464283,
+                            "comments": [
+                                {
+                                    "id": 3,
+                                    "phid": "PHID-XCMT-j7rv4pvsx45as4kcs73g",
+                                    "version": 1,
+                                    "authorPHID": "PHID-USER-bb",
+                                    "dateCreated": 1536464283,
+                                    "dateModified": 1536464283,
+                                    "removed": false,
+                                    "content": {
+                                        "raw": "sdsadasdsa"
+                                    }
+                                }
+                            ],
+                            "fields": {}
+                        }
+                    ],
+                    "cursor": {
+                        "limit": 100,
+                        "after": null,
+                        "before": null
+                    }
+                }
+            }
+        ],
+        "diffusion.querycommits": [
+            {
+                "kwargs": {
+                    "phids": [
+                        "PHID-CMIT-hhxrbsi7hqdx437bmssd"
+                    ]
+                },
+                "response": {
+                    "data": {
+                        "PHID-CMIT-hhxrbsi7hqdx437bmssd": {
+                            "id": "15",
+                            "phid": "PHID-CMIT-hhxrbsi7hqdx437bmssd",
+                            "repositoryPHID": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                            "identifier": "d988f886f4a4563630f1a6b3f49ccb59c98c311b",
+                            "epoch": "1535082289",
+                            "authorEpoch": 1535081885,
+                            "uri": "https://phabricator.dwilches.com/R3:d988f886f4a4563630f1a6b3f49ccb59c98c311b",
+                            "isImporting": false,
+                            "summary": "Make Flask listen on all interfaces",
+                            "authorPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
+                            "committerPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
+                            "author": "Daniel Wilches <dwilches@gmail.com>",
+                            "authorName": "Daniel Wilches",
+                            "authorEmail": "dwilches@gmail.com",
+                            "committer": "Daniel Wilches <dwilches@gmail.com>",
+                            "committerName": "Daniel Wilches",
+                            "committerEmail": "dwilches@gmail.com",
+                            "hashes": []
+                        }
+                    },
+                    "identifierMap": {},
+                    "cursor": {
+                        "limit": 100,
+                        "after": null,
+                        "before": null
+                    }
+                }
+            }
+        ],
+        "diffusion.repository.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-REPO-2bdkr2te4eqaopwszp57"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 3,
+                            "type": "REPO",
+                            "phid": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                            "fields": {
+                                "name": "SlackNotiphier",
+                                "vcs": "git",
+                                "callsign": null,
+                                "shortName": "SlackNotiphier",
+                                "status": "active",
+                                "isImporting": false,
+                                "spacePHID": null,
+                                "dateCreated": 1535080706,
+                                "dateModified": 1535082360,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "admin",
+                                    "diffusion.push": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ],
+                    "maps": {},
+                    "query": {
+                        "queryKey": null
+                    },
+                    "cursor": {
+                        "limit": 100,
+                        "after": null,
+                        "before": null,
+                        "order": null
+                    }
+                }
+            }
+        ]
+    }
+}

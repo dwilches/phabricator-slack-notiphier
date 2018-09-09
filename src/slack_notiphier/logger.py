@@ -17,7 +17,7 @@ class Logger(object):
         self._logger.info(colored(message.format(*args), 'blue', attrs=['dark', 'bold']))
 
     def warn(self, message, *args):
-        self._logger.warn(colored(message.format(*args), 'orange', attrs=['dark', 'bold']))
+        self._logger.warn(colored(message.format(*args), 'yellow', attrs=['dark', 'bold']))
 
     def error(self, message, *args):
         self._logger.error(colored(message.format(*args), 'red', attrs=['dark', 'bold']))

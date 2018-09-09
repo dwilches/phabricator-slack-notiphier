@@ -22,6 +22,14 @@ class WebhookFirehose:
         self._users = Users(phab_client=self._phab_client,
                             slack_client=self._slack_client)
 
+        self._transaction_handlers = {
+            "TASK": self._handle_task,
+            "DREV": self._handle_diff,
+            "CMIT": self._handle_commit,
+            "PROJ": self._handle_proj,
+            "REPO": self._handle_repo,
+        }
+
         message = "Slack Notiphier started running."
         self._logger.info(message)
         self._slack_client.send_message(message)
@@ -62,20 +70,11 @@ class WebhookFirehose:
         """
             Receives a single interesting transaction and send a message to Slack.
         """
+        if object_type not in self._transaction_handlers:
+            self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+            return None
 
-        if object_type == "TASK":
-            return self._handle_task(transaction)
-
-        if object_type == "DREV":
-            return self._handle_diff(transaction)
-
-        if object_type == "PROJ":
-            return self._handle_proj(transaction)
-
-        if object_type == "REPO":
-            return self._handle_repo(transaction)
-
-        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+        return self._transaction_handlers[object_type](transaction)
 
     def _handle_task(self, transaction):
         """
@@ -195,6 +194,27 @@ class WebhookFirehose:
             return "{} User {} took command of diff {}".format(owner_mention,
                                                                author_name,
                                                                diff_link)
+
+        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+
+    def _handle_commit(self, transaction):
+        """
+            Receives an internal transaction object and returns a message ready for Slack.
+        """
+
+        commit_link = self._phab_client.get_link(transaction['commit'])
+
+        author_phid = transaction['author']
+
+        if not self._users[author_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(author_phid))
+
+        author_name = self._users[author_phid]['phab_username']
+
+        if transaction['type'] == 'commit-add-comment':
+            return "User {} created commit {} on repository {}".format(author_name,
+                                                                       commit_link,
+                                                                       transaction['repo'])
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 

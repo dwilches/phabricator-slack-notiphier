@@ -25,6 +25,14 @@ class PhabClient(object):
         self._url = os.environ.get('NOTIPHIER_PHABRICATOR_URL')
         self._client = self._connect_phabricator(token=os.environ.get('NOTIPHIER_PHABRICATOR_TOKEN'))
 
+        self._transaction_handlers = {
+            'TASK': self._handle_task,
+            'DREV': self._handle_diff,
+            'CMIT': self._handle_commit,
+            'PROJ': self._handle_proj,
+            'REPO': self._handle_repo,
+        }
+
     def _connect_phabricator(self, token):
         url = urljoin(self._url, "api/")
 
@@ -78,14 +86,8 @@ class PhabClient(object):
             self._logger.debug("Transaction:\n{}", json.dumps(t, indent=4))
 
             # These types are as sent by Phabricator's Firehose Webhook
-            if object_type == 'TASK':
-                results.extend(self._handle_task(t))
-            elif object_type == 'DREV':
-                results.extend(self._handle_diff(t))
-            elif object_type == 'PROJ':
-                results.extend(self._handle_proj(t))
-            elif object_type == 'REPO':
-                results.extend(self._handle_repo(t))
+            if object_type in self._transaction_handlers:
+                results.extend(self._transaction_handlers[object_type](t))
             else:
                 self._logger.debug("No message will be generated for object of type {}", object_type)
 
@@ -103,22 +105,26 @@ class PhabClient(object):
             return "<{}/T{}|T{}>: {}".format(self._url, task_id, task_id, task_name)
 
         if phid.startswith("PHID-DREV-"):
-            task = self._client.differential.revision.search(constraints={'phids': [phid]})
-            diff_id = task['data'][0]['id']
-            diff_name = task['data'][0]['fields']['title']
+            diff = self._client.differential.revision.search(constraints={'phids': [phid]})
+            diff_id = diff['data'][0]['id']
+            diff_name = diff['data'][0]['fields']['title']
             return "<{}/D{}|D{}>: {}".format(self._url, diff_id, diff_id, diff_name)
 
         if phid.startswith("PHID-PROJ-"):
-            task = self._client.project.search(constraints={'phids': [phid]})
-            proj_id = task['data'][0]['id']
-            proj_name = task['data'][0]['fields']['name']
+            proj = self._client.project.search(constraints={'phids': [phid]})
+            proj_id = proj['data'][0]['id']
+            proj_name = proj['data'][0]['fields']['name']
             return "<{}/project/view/{}|{}>".format(self._url, proj_id, proj_name)
 
         if phid.startswith("PHID-REPO-"):
-            task = self._client.diffusion.repository.search(constraints={'phids': [phid]})
-            proj_id = task['data'][0]['id']
-            proj_name = task['data'][0]['fields']['name']
-            return "<{}/source/{}|{}>".format(self._url, proj_id, proj_name)
+            repo = self.get_repo(phid)
+            return "<{}/source/{}|{}>".format(self._url, repo['id'], repo['name'])
+
+        if phid.startswith("PHID-CMIT-"):
+            commit = self._client.diffusion.querycommits(phids=[phid])
+            commit_name = commit['data'][phid]['summary']
+            commit_uri = commit['data'][phid]['uri']
+            return "<{}|{}>".format(commit_uri, commit_name)
 
         return None
 
@@ -134,6 +140,27 @@ class PhabClient(object):
         if phid.startswith("PHID-DREV-"):
             task = self._client.differential.revision.search(constraints={'phids': [phid]})
             return task['data'][0]['fields']['authorPHID']
+
+        return None
+
+    def get_repo(self, phid):
+        repo = self._client.diffusion.repository.search(constraints={'phids': [phid]})
+        return {
+            "id": repo['data'][0]['id'],
+            "name": repo['data'][0]['fields']['name'],
+        }
+
+    def _get_repo_for(self, phid):
+        """
+            Returns the repository to which the given diff/commit PHID belongs.
+        """
+        if phid.startswith("PHID-DREV-"):
+            task = self._client.differential.revision.search(constraints={'phids': [phid]})
+            return task['data'][0]['fields']['repositoryPHID']
+
+        if phid.startswith("PHID-CMIT-"):
+            task = self._client.diffusion.querycommits(phids=[phid])
+            return task['data'][phid]['repositoryPHID']
 
         return None
 
@@ -250,6 +277,29 @@ class PhabClient(object):
                 'author': diff['authorPHID'],
                 'diff': diff['objectPHID']
             }
+        else:
+            self._logger.debug("No message will be generated")
+
+    def _handle_commit(self, commit):
+        """
+            Receives an object representing a transaction for a commit (in Phabricator's own format).
+            Returns a generator with the relevant parts of the transactions.
+        """
+        repo_phid = self._get_repo_for(commit['objectPHID'])
+        repo_name = self.get_repo(repo_phid)['name']
+
+        if commit['type'] == 'comment':
+            for comment in commit['comments']:
+                if comment['removed']:
+                    continue
+
+                yield {
+                    'type': 'commit-add-comment',
+                    'author': commit['authorPHID'],
+                    'commit': commit['objectPHID'],
+                    'repo': repo_name,
+                    'comment': comment['content']['raw']
+                }
         else:
             self._logger.debug("No message will be generated")
 
