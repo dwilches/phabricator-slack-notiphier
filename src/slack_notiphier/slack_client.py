@@ -14,7 +14,14 @@ class SlackClient:
 
     def __init__(self):
         self._client = self._connect_slack(get_config('slack_token'))
-        self._channel = get_config('slack_default_channel')
+        self._default_channel = get_config('slack_default_channel')
+        self._colors = {
+            'none': '#F0F0F0',
+            'info': '#28D7E5',
+            'warn': 'warning',
+            'error': 'danger',
+            'success': 'good',
+        }
 
     def _connect_slack(self, token):
         if not token:
@@ -51,9 +58,17 @@ class SlackClient:
                 Post messages as the app
                 chat:write
         """
+        channel = message.get('channel', self._default_channel)
+        attachments = [
+            {
+                'color': self._colors[message.get('type', 'none')],
+                'text': message['text'],
+            }
+        ]
+
         result = self._client.api_call("chat.postMessage",
-                                       channel=self._channel,
-                                       text=message)
+                                       channel=channel,
+                                       attachments=attachments)
         if not result['ok']:
             self._logger.error("Couldn't send message to Slack because '{}', dropping: {}",
                                result['error'],

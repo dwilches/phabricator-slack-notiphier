@@ -34,7 +34,10 @@ class WebhookFirehose:
 
         message = "Slack Notiphier started running."
         self._logger.info(message)
-        self._slack_client.send_message(message)
+        self._slack_client.send_message({
+            'text': message,
+            'type': 'info'
+        })
 
     def handle(self, request):
         """
@@ -56,7 +59,10 @@ class WebhookFirehose:
                 *Stacktrace:*
                 {}
                 """).format(e, request, textwrap.indent(traceback.format_exc(), "        "))
-            self._slack_client.send_message(message)
+            self._slack_client.send_message({
+                'text': message,
+                'type': 'error',
+            })
 
     def _get_transactions(self, object_type, object_phid, wrapped_phids):
         """
@@ -108,8 +114,10 @@ class WebhookFirehose:
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'task-create':
-            return "User {} created task {}".format(author_name,
-                                                    task_link)
+            message = "User {} created task {}".format(author_name, task_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'task-add-comment':
             comment = self._replace_mentions(transaction['comment'])
@@ -117,11 +125,16 @@ class WebhookFirehose:
                                                                      task_link,
                                                                      comment)
 
-            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            message = "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'task-claim':
-            return "User {} claimed task {}".format(author_name,
-                                                    task_link)
+            message = "User {} claimed task {}".format(author_name, task_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'task-assign':
             if transaction['asignee']:
@@ -129,23 +142,30 @@ class WebhookFirehose:
             else:
                 asignee_mention = "nobody"
 
-            return "User {} assigned {} to task {}".format(author_name,
-                                                           asignee_mention,
-                                                           task_link)
+            message = "User {} assigned {} to task {}".format(author_name, asignee_mention, task_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'task-change-status':
             message = "User {} changed the status of task {} from {} to {}".format(author_name,
                                                                                    task_link,
                                                                                    transaction['old'],
                                                                                    transaction['new'])
-            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            message = "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'task-change-priority':
             message = "User {} changed the priority of task {} from {} to {}".format(author_name,
                                                                                      task_link,
                                                                                      transaction['old'],
                                                                                      transaction['new'])
-            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            message = "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            return {
+                'text': message
+            }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
@@ -169,42 +189,54 @@ class WebhookFirehose:
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'diff-create':
-            return "User {} created diff {}".format(author_name,
-                                                    diff_link)
+            message = "User {} created diff {}".format(author_name, diff_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-add-comment':
             comment = self._replace_mentions(transaction['comment'])
-            message = "User {} commented on diff {} with {}".format(author_name,
-                                                                    diff_link,
-                                                                    comment)
-            return "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            message = "User {} commented on diff {} with {}".format(author_name, diff_link, comment)
+            message = "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-update':
-            return "User {} updated diff {}".format(author_name,
-                                                    diff_link)
+            message = "User {} updated diff {}".format(author_name, diff_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-abandon':
-            return "User {} abandoned diff {}".format(author_name,
-                                                      diff_link)
+            message = "User {} abandoned diff {}".format(author_name, diff_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-reclaim':
-            return "User {} reclaimed diff {}".format(author_name,
-                                                      diff_link)
+            message = "User {} reclaimed diff {}".format(author_name, diff_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-accept':
-            return "{} User {} accepted diff {}".format(owner_mention,
-                                                        author_name,
-                                                        diff_link)
+            message = "{} User {} accepted diff {}".format(owner_mention, author_name, diff_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-request-changes':
-            return "{} User {} requested changes to diff {}".format(owner_mention,
-                                                                    author_name,
-                                                                    diff_link)
+            message = "{} User {} requested changes to diff {}".format(owner_mention, author_name, diff_link)
+            return {
+                'text': message
+            }
 
         elif transaction['type'] == 'diff-commandeer':
-            return "{} User {} took command of diff {}".format(owner_mention,
-                                                               author_name,
-                                                               diff_link)
+            message = "{} User {} took command of diff {}".format(owner_mention, author_name, diff_link)
+            return {
+                'text': message
+            }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
@@ -223,9 +255,10 @@ class WebhookFirehose:
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'commit-add-comment':
-            return "User {} created commit {} on repository {}".format(author_name,
-                                                                       commit_link,
-                                                                       transaction['repo'])
+            message = "User {} created commit {} on repository {}".format(author_name, commit_link, transaction['repo'])
+            return {
+                'text': message
+            }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
@@ -244,8 +277,10 @@ class WebhookFirehose:
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'proj-create':
-            return "User {} created project {}".format(author_name,
-                                                       proj_link)
+            message = "User {} created project {}".format(author_name, proj_link)
+            return {
+                'text': message
+            }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
@@ -264,8 +299,10 @@ class WebhookFirehose:
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'repo-create':
-            return "User {} created repository {}".format(author_name,
-                                                          repo_link)
+            message = "User {} created repository {}".format(author_name, repo_link)
+            return {
+                'text': message
+            }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
