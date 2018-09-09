@@ -22,7 +22,7 @@
         ]
     },
     "expected_responses": [
-        "User ph-username-bb assigned <@SLACK-ID-cc> to task <http://_phab_url_/T2|T2>: T2"
+        "User ph-username-bb claimed task <http://_phab_url_/T2|T2>: T2"
     ],
     "mocked_phab_calls": {
         "transaction.search": [
@@ -48,7 +48,7 @@
                             "comments": [],
                             "fields": {
                                 "old": null,
-                                "new": "PHID-USER-cc"
+                                "new": "PHID-USER-bb"
                             }
                         }
                     ]

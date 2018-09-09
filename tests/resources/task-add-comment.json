@@ -13,16 +13,16 @@
             "test": false,
             "silent": false,
             "secure": false,
-            "epoch": 1534912832
+            "epoch": 1534912766
         },
         "transactions": [
             {
-                "phid": "PHID-XACT-TASK-u4gpptnj7lxvczx"
+                "phid": "PHID-XACT-TASK-qhfovmtxjgvfvkk"
             }
         ]
     },
     "expected_responses": [
-        "User ph-username-bb assigned <@SLACK-ID-cc> to task <http://_phab_url_/T2|T2>: T2"
+        "<@SLACK-ID-cc> User ph-username-bb commented on task <http://_phab_url_/T2|T2>: T2 with: Comment BCD"
     ],
     "mocked_phab_calls": {
         "transaction.search": [
@@ -31,25 +31,35 @@
                     "objectIdentifier": "PHID-TASK-ziaqanjxizqjczcgjtk7",
                     "constraints": {
                         "phids": [
-                            "PHID-XACT-TASK-u4gpptnj7lxvczx"
+                            "PHID-XACT-TASK-qhfovmtxjgvfvkk"
                         ]
                     }
                 },
                 "response": {
                     "data": [
                         {
-                            "id": 17,
-                            "phid": "PHID-XACT-TASK-u4gpptnj7lxvczx",
-                            "type": "owner",
+                            "id": 15,
+                            "phid": "PHID-XACT-TASK-qhfovmtxjgvfvkk",
+                            "type": "comment",
                             "authorPHID": "PHID-USER-bb",
                             "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
-                            "dateCreated": 1534912831,
-                            "dateModified": 1534912831,
-                            "comments": [],
-                            "fields": {
-                                "old": null,
-                                "new": "PHID-USER-cc"
-                            }
+                            "dateCreated": 1534912766,
+                            "dateModified": 1534912766,
+                            "comments": [
+                                {
+                                    "id": 5,
+                                    "phid": "PHID-XCMT-oflujegovridkszuaglz",
+                                    "version": 1,
+                                    "authorPHID": "PHID-USER-bb",
+                                    "dateCreated": 1534912766,
+                                    "dateModified": 1534912766,
+                                    "removed": false,
+                                    "content": {
+                                        "raw": "Comment BCD"
+                                    }
+                                }
+                            ],
+                            "fields": {}
                         }
                     ]
                 }
@@ -76,7 +86,7 @@
                                     "raw": ""
                                 },
                                 "authorPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
-                                "ownerPHID": "PHID-USER-bb",
+                                "ownerPHID": "PHID-USER-cc",
                                 "status": {
                                     "value": "resolved",
                                     "name": "Resolved",

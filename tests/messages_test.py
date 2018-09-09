@@ -103,6 +103,8 @@ def _execute_test_from_file(test_filename, Phabricator, Slack):
                                                                        test_spec["mocked_phab_calls"])
         instance_phab.differential.revision.search.side_effect = _mock_phab_call("differential.revision.search",
                                                                                  test_spec["mocked_phab_calls"])
+        instance_phab.maniphest.search.side_effect = _mock_phab_call("maniphest.search",
+                                                                     test_spec["mocked_phab_calls"])
 
         # Mock Slack calls
         instance_slack = Slack.return_value
@@ -127,6 +129,10 @@ def _execute_test_from_file(test_filename, Phabricator, Slack):
 def _mock_phab_call(method, mocked_phab_calls):
 
     def inner_phab_call_handler(*args, **kwargs):
+        if method not in mocked_phab_calls:
+            raise ValueError("Mock Phabricator called with unexpected method: method={} valid methods={}"
+                             .format(method, mocked_phab_calls.keys()))
+
         for expected_call in mocked_phab_calls[method]:
             if expected_call["kwargs"] == kwargs:
                 return expected_call["response"]
@@ -168,6 +174,50 @@ def test_welcome_message(Phabricator, Slack):
                                                    channel="_slack_channel_",
                                                    text="Slack Notiphier started running.")
 
+
+# Task Tests
+
+def test_task_create():
+    _execute_test_from_file("task-create.json")
+
+
+def test_task_add_comment():
+    _execute_test_from_file("task-add-comment.json")
+
+
+def test_task_add_comment_own():
+    _execute_test_from_file("task-add-comment-own.json")
+
+
+def test_task_claim():
+    _execute_test_from_file("task-claim.json")
+
+
+def test_task_assign():
+    _execute_test_from_file("task-assign.json")
+
+
+#def test_task_add_subscriber():
+#    _execute_test_from_file("task-add-subscriber.json")
+
+
+def test_task_change_priority():
+    _execute_test_from_file("task-change-priority.json")
+
+
+def test_task_change_priority_own():
+    _execute_test_from_file("task-change-priority-own.json")
+
+
+def test_task_change_status():
+    _execute_test_from_file("task-change-status.json")
+
+
+def test_task_change_status_own():
+    _execute_test_from_file("task-change-status-own.json")
+
+
+# Diff Revision Tests
 
 def test_diff_create():
     _execute_test_from_file("diff-create.json")

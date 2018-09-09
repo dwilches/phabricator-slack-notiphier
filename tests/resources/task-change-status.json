@@ -2,7 +2,7 @@
     "request": {
         "object": {
             "type": "TASK",
-            "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7"
+            "phid": "PHID-TASK-vh3d7u6lkqpxgmnquxvp"
         },
         "triggers": [
             {
@@ -13,42 +13,42 @@
             "test": false,
             "silent": false,
             "secure": false,
-            "epoch": 1534912832
+            "epoch": 1535224457
         },
         "transactions": [
             {
-                "phid": "PHID-XACT-TASK-u4gpptnj7lxvczx"
+                "phid": "PHID-XACT-TASK-2j5fiagcruhg2cs"
             }
         ]
     },
     "expected_responses": [
-        "User ph-username-bb assigned <@SLACK-ID-cc> to task <http://_phab_url_/T2|T2>: T2"
+        "<@SLACK-ID-cc> User ph-username-bb changed the status of task <http://_phab_url_/T8|T8>: Task Name from open to wontfix"
     ],
     "mocked_phab_calls": {
         "transaction.search": [
             {
                 "kwargs": {
-                    "objectIdentifier": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                    "objectIdentifier": "PHID-TASK-vh3d7u6lkqpxgmnquxvp",
                     "constraints": {
                         "phids": [
-                            "PHID-XACT-TASK-u4gpptnj7lxvczx"
+                            "PHID-XACT-TASK-2j5fiagcruhg2cs"
                         ]
                     }
                 },
                 "response": {
                     "data": [
                         {
-                            "id": 17,
-                            "phid": "PHID-XACT-TASK-u4gpptnj7lxvczx",
-                            "type": "owner",
+                            "id": 74,
+                            "phid": "PHID-XACT-TASK-2j5fiagcruhg2cs",
+                            "type": "status",
                             "authorPHID": "PHID-USER-bb",
-                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
-                            "dateCreated": 1534912831,
-                            "dateModified": 1534912831,
+                            "objectPHID": "PHID-TASK-vh3d7u6lkqpxgmnquxvp",
+                            "dateCreated": 1535224457,
+                            "dateModified": 1535224457,
                             "comments": [],
                             "fields": {
-                                "old": null,
-                                "new": "PHID-USER-cc"
+                                "old": "open",
+                                "new": "wontfix"
                             }
                         }
                     ]
@@ -60,41 +60,41 @@
                 "kwargs": {
                     "constraints": {
                         "phids": [
-                            "PHID-TASK-ziaqanjxizqjczcgjtk7"
+                            "PHID-TASK-vh3d7u6lkqpxgmnquxvp"
                         ]
                     }
                 },
                 "response": {
                     "data": [
                         {
-                            "id": 2,
+                            "id": 8,
                             "type": "TASK",
-                            "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "phid": "PHID-TASK-vh3d7u6lkqpxgmnquxvp",
                             "fields": {
-                                "name": "T2",
+                                "name": "Task Name",
                                 "description": {
                                     "raw": ""
                                 },
-                                "authorPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
-                                "ownerPHID": "PHID-USER-bb",
+                                "authorPHID": "PHID-USER-cc",
+                                "ownerPHID": "PHID-USER-cc",
                                 "status": {
                                     "value": "resolved",
                                     "name": "Resolved",
                                     "color": null
                                 },
                                 "priority": {
-                                    "value": 90,
+                                    "value": 50,
                                     "subpriority": 0,
-                                    "name": "Needs Triage",
-                                    "color": "violet"
+                                    "name": "Normal",
+                                    "color": "orange"
                                 },
                                 "points": null,
                                 "subtype": "default",
                                 "closerPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
-                                "dateClosed": 1534912856,
+                                "dateClosed": 1535225512,
                                 "spacePHID": null,
-                                "dateCreated": 1534912743,
-                                "dateModified": 1534912856,
+                                "dateCreated": 1535224447,
+                                "dateModified": 1535225512,
                                 "policy": {
                                     "view": "users",
                                     "interact": "users",
@@ -109,3 +109,4 @@
         ]
     }
 }
+

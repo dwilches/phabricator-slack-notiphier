@@ -1,35 +1,173 @@
 {
-  "object": {
-    "type": "TASK",
-    "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7"
-  },
-  "triggers": [
-    {
-      "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+    "request": {
+        "object": {
+            "type": "TASK",
+            "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1534912744
+        },
+        "transactions": [
+            {
+               "phid": "PHID-XACT-TASK-j2suncsctokemky"
+            },
+            {
+                "phid": "PHID-XACT-TASK-3aqdcw5qmjhfcnx"
+            },
+            {
+                "phid": "PHID-XACT-TASK-sxcemm3e7wcusbd"
+            },
+            {
+                "phid": "PHID-XACT-TASK-ghhwbfzx2bpxfp2"
+            },
+            {
+                "phid": "PHID-XACT-TASK-nxq76cjtcfwxvhk"
+            }
+        ]
+    },
+    "expected_responses": [
+        "User ph-username-bb created task <http://_phab_url_/T2|T2>: T2"
+    ],
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-TASK-j2suncsctokemky",
+                            "PHID-XACT-TASK-3aqdcw5qmjhfcnx",
+                            "PHID-XACT-TASK-sxcemm3e7wcusbd",
+                            "PHID-XACT-TASK-ghhwbfzx2bpxfp2",
+                            "PHID-XACT-TASK-nxq76cjtcfwxvhk"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 14,
+                            "phid": "PHID-XACT-TASK-j2suncsctokemky",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "dateCreated": 1534912743,
+                            "dateModified": 1534912743,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 13,
+                            "phid": "PHID-XACT-TASK-3aqdcw5qmjhfcnx",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "dateCreated": 1534912743,
+                            "dateModified": 1534912743,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 12,
+                            "phid": "PHID-XACT-TASK-sxcemm3e7wcusbd",
+                            "type": null,
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "dateCreated": 1534912743,
+                            "dateModified": 1534912743,
+                            "comments": [],
+                            "fields": {}
+                        },
+                        {
+                            "id": 11,
+                            "phid": "PHID-XACT-TASK-ghhwbfzx2bpxfp2",
+                            "type": "title",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "dateCreated": 1534912743,
+                            "dateModified": 1534912743,
+                            "comments": [],
+                            "fields": {
+                                "old": "",
+                                "new": "T2"
+                            }
+                        },
+                        {
+                            "id": 10,
+                            "phid": "PHID-XACT-TASK-nxq76cjtcfwxvhk",
+                            "type": "create",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "dateCreated": 1534912743,
+                            "dateModified": 1534912743,
+                            "comments": [],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "maniphest.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-TASK-ziaqanjxizqjczcgjtk7"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 2,
+                            "type": "TASK",
+                            "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "fields": {
+                                "name": "T2",
+                                "description": {
+                                    "raw": ""
+                                },
+                                "authorPHID": "PHID-USER-bb",
+                                "ownerPHID": "PHID-USER-bb",
+                                "status": {
+                                    "value": "resolved",
+                                    "name": "Resolved",
+                                    "color": null
+                                },
+                                "priority": {
+                                    "value": 90,
+                                    "subpriority": 0,
+                                    "name": "Needs Triage",
+                                    "color": "violet"
+                                },
+                                "points": null,
+                                "subtype": "default",
+                                "closerPHID": "PHID-USER-bb",
+                                "dateClosed": 1534912856,
+                                "spacePHID": null,
+                                "dateCreated": 1534912743,
+                                "dateModified": 1534912856,
+                                "policy": {
+                                    "view": "users",
+                                    "interact": "users",
+                                    "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
     }
-  ],
-  "action": {
-    "test": false,
-    "silent": false,
-    "secure": false,
-    "epoch": 1534912744
-  },
-  "transactions": [
-    {
-      "phid": "PHID-XACT-TASK-j2suncsctokemky"
-    },
-    {
-      "phid": "PHID-XACT-TASK-3aqdcw5qmjhfcnx"
-    },
-    {
-      "phid": "PHID-XACT-TASK-sxcemm3e7wcusbd"
-    },
-    {
-      "phid": "PHID-XACT-TASK-ghhwbfzx2bpxfp2"
-    },
-    {
-      "phid": "PHID-XACT-TASK-nxq76cjtcfwxvhk"
-    }
-  ]
 }
+
 

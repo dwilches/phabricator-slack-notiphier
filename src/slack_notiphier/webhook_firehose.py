@@ -83,10 +83,16 @@ class WebhookFirehose:
         task_link = self._phab_client.get_link(transaction['task'])
 
         owner_phid = self._phab_client.get_owner(transaction['task'])
+        author_phid = transaction['author']
+
+        if not self._users[owner_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(owner_phid))
+        if not self._users[author_phid]:
+            raise ValueError("Unknown Phabricator user: {}".format(author_phid))
+
         owner_name = self._users[owner_phid]['phab_username']
         owner_mention = self._users.get_mention(owner_phid)
 
-        author_phid = transaction['author']
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'task-create':
