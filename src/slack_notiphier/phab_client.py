@@ -154,7 +154,7 @@ class PhabClient(object):
                     continue
 
                 yield {
-                    'type': 'task-create-comment',
+                    'type': 'task-add-comment',
                     'author': task['authorPHID'],
                     'task': task['objectPHID'],
                     'comment': comment['content']['raw']
@@ -209,7 +209,7 @@ class PhabClient(object):
                     continue
 
                 yield {
-                    'type': 'diff-create-comment',
+                    'type': 'diff-add-comment',
                     'author': diff['authorPHID'],
                     'diff': diff['objectPHID'],
                     'comment': comment['content']['raw']

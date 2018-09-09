@@ -1,0 +1,121 @@
+{
+    "request": {
+        "object": {
+            "type": "TASK",
+            "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1534912766
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-TASK-qhfovmtxjgvfvkk"
+            }
+        ]
+    },
+    "expected_responses": [
+        "<@SLACK-ID-cc> User ph-username-bb commented on task <http://_phab_url_/T2|T2>: T2 with: Hey <@SLACK-ID-dd>,<@SLACK-ID-ee>: look at this"
+    ],
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-TASK-qhfovmtxjgvfvkk"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 15,
+                            "phid": "PHID-XACT-TASK-qhfovmtxjgvfvkk",
+                            "type": "comment",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "dateCreated": 1534912766,
+                            "dateModified": 1534912766,
+                            "comments": [
+                                {
+                                    "id": 5,
+                                    "phid": "PHID-XCMT-oflujegovridkszuaglz",
+                                    "version": 1,
+                                    "authorPHID": "PHID-USER-bb",
+                                    "dateCreated": 1534912766,
+                                    "dateModified": 1534912766,
+                                    "removed": false,
+                                    "content": {
+                                        "raw": "Hey @ph-username-dd,@ph-username-ee: look at this"
+                                    }
+                                }
+                            ],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "maniphest.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-TASK-ziaqanjxizqjczcgjtk7"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 2,
+                            "type": "TASK",
+                            "phid": "PHID-TASK-ziaqanjxizqjczcgjtk7",
+                            "fields": {
+                                "name": "T2",
+                                "description": {
+                                    "raw": ""
+                                },
+                                "authorPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
+                                "ownerPHID": "PHID-USER-cc",
+                                "status": {
+                                    "value": "resolved",
+                                    "name": "Resolved",
+                                    "color": null
+                                },
+                                "priority": {
+                                    "value": 90,
+                                    "subpriority": 0,
+                                    "name": "Needs Triage",
+                                    "color": "violet"
+                                },
+                                "points": null,
+                                "subtype": "default",
+                                "closerPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
+                                "dateClosed": 1534912856,
+                                "spacePHID": null,
+                                "dateCreated": 1534912743,
+                                "dateModified": 1534912856,
+                                "policy": {
+                                    "view": "users",
+                                    "interact": "users",
+                                    "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

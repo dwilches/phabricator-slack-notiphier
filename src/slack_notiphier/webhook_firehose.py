@@ -1,5 +1,6 @@
 
 import json
+import re
 
 from .users import Users
 from .logger import Logger
@@ -13,6 +14,7 @@ class WebhookFirehose:
         It then converts each notification to a human-readable message and sends it through Slack.
     """
     _logger = Logger('WebhookFirehose')
+    _re_phab_mention = re.compile("@([\\w_-]+)")
 
     def __init__(self):
         self._slack_client = SlackClient()
@@ -32,7 +34,7 @@ class WebhookFirehose:
         object_type = request['object']['type']
         object_phid = request['object']['phid']
 
-        #self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
+        self._logger.debug("Incoming message:\n{}", json.dumps(request, indent=4))
 
         transactions = self._get_transactions(object_type, object_phid, request['transactions'])
         self._handle_transactions(object_type, transactions)
@@ -98,10 +100,12 @@ class WebhookFirehose:
         if transaction['type'] == 'task-create':
             return "User {} created task {}".format(author_name,
                                                     task_link)
-        elif transaction['type'] == 'task-create-comment':
+
+        elif transaction['type'] == 'task-add-comment':
+            comment = self._replace_mentions(transaction['comment'])
             message = "User {} commented on task {} with: {}".format(author_name,
                                                                      task_link,
-                                                                     transaction['comment'])
+                                                                     comment)
 
             return "{} {}".format(owner_mention, message) if author_name != owner_name else message
 
@@ -158,10 +162,11 @@ class WebhookFirehose:
             return "User {} created diff {}".format(author_name,
                                                     diff_link)
 
-        elif transaction['type'] == 'diff-create-comment':
+        elif transaction['type'] == 'diff-add-comment':
+            comment = self._replace_mentions(transaction['comment'])
             message = "User {} commented on diff {} with {}".format(author_name,
                                                                     diff_link,
-                                                                    transaction['comment'])
+                                                                    comment)
             return "{} {}".format(owner_mention, message) if author_name != owner_name else message
 
         elif transaction['type'] == 'diff-update':
@@ -232,3 +237,18 @@ class WebhookFirehose:
                                                           repo_link)
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+
+    def _replace_mentions(self, text):
+        matches = self._re_phab_mention.finditer(text)
+
+        replacements = {}
+        for match in matches:
+            phab_username = match.group(1)
+            mention = self._users.get_mention(phab_username)
+            if mention is not None:
+                replacements[match.group(0)] = mention
+
+        for phab_username, slack_mention in replacements.items():
+            text = text.replace(phab_username, slack_mention)
+
+        return text

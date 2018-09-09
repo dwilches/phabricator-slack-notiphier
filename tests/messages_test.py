@@ -53,6 +53,24 @@ def _fixture_phab_users():
                     "roles": [],
                 },
             },
+            {
+                "type": "USER",
+                "phid": "PHID-USER-dd",
+                "fields": {
+                    "username": "ph-username-dd",
+                    "realName": "User Name DD",
+                    "roles": [],
+                },
+            },
+            {
+                "type": "USER",
+                "phid": "PHID-USER-ee",
+                "fields": {
+                    "username": "ph-username-ee",
+                    "realName": "User Name EE",
+                    "roles": [],
+                },
+            },
         ]
     }
 
@@ -78,12 +96,12 @@ def _fixture_slack_users():
                 'id': "SLACK-ID-dd",
                 'real_name': "User Name DD",
                 'is_bot': False,
-                'deleted': True,
+                'deleted': False,
             },
             {
                 'id': "SLACK-ID-ee",
                 'real_name': "User Name EE",
-                'is_bot': True,
+                'is_bot': False,
                 'deleted': False,
             }
         ]
@@ -189,6 +207,10 @@ def test_task_add_comment():
     _execute_test_from_file("task-add-comment.json")
 
 
+def test_task_add_comment_with_mention():
+    _execute_test_from_file("task-add-comment-with-mention.json")
+
+
 def test_task_add_comment_own():
     _execute_test_from_file("task-add-comment-own.json")
 
@@ -257,6 +279,10 @@ def test_diff_add_comment():
 
 def test_diff_add_comment_own():
     _execute_test_from_file("diff-add-comment-own.json")
+
+
+def test_diff_add_comment_with_mention():
+    _execute_test_from_file("diff-add-comment-with-mention.json")
 
 
 # Project Tests
