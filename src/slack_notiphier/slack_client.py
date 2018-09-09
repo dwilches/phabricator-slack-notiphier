@@ -4,6 +4,7 @@ import os
 import slackclient
 
 from .logger import Logger
+from .config import get_config
 
 
 class SlackClient:
@@ -14,8 +15,8 @@ class SlackClient:
     _logger = Logger('SlackClient')
 
     def __init__(self):
-        self._client = self._connect_slack(os.environ.get('NOTIPHIER_SLACK_TOKEN'))
-        self._channel = os.environ.get('NOTIPHIER_SLACK_CHANNEL')
+        self._client = self._connect_slack(get_config('slack_token'))
+        self._channel = get_config('slack_default_channel')
 
     def _connect_slack(self, token):
         if not token:

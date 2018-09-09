@@ -7,19 +7,12 @@ import os
 from unittest.mock import patch
 
 from slack_notiphier.webhook_firehose import WebhookFirehose
+from slack_notiphier.config import reload_config
 
+with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-notiphier.cfg'}):
+    reload_config()
 
-# TODO: these 3 fixtures should go in a common file
-
-
-@pytest.fixture
-def _fixture_env_vars():
-    return {
-        'NOTIPHIER_PHABRICATOR_URL': 'http://_phab_url_',
-        'NOTIPHIER_PHABRICATOR_TOKEN': '_phab_token_',
-        'NOTIPHIER_SLACK_TOKEN': '_slack_token_',
-        'NOTIPHIER_SLACK_CHANNEL': '_slack_channel_',
-    }
+# TODO: these fixtures should go in a common file
 
 
 @pytest.fixture
@@ -111,7 +104,7 @@ def _fixture_slack_users():
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
 def _execute_test_from_file(test_filename, Phabricator, Slack):
-    with patch.dict(os.environ, _fixture_env_vars()), open("../tests/resources/" + test_filename, 'r') as fp_test_spec:
+    with open("../tests/resources/" + test_filename, 'r') as fp_test_spec:
         test_spec = json.load(fp_test_spec)
 
         # Mock Phabricator calls
@@ -192,11 +185,10 @@ def test_welcome_message(Phabricator, Slack):
     slack_instance = Slack.return_value
     slack_instance.api_call.side_effect = _mock_slack_api_call
 
-    with patch.dict(os.environ, _fixture_env_vars()):
-        WebhookFirehose()
-        slack_instance.api_call.assert_called_with("chat.postMessage",
-                                                   channel="_slack_channel_",
-                                                   text="Slack Notiphier started running.")
+    WebhookFirehose()
+    slack_instance.api_call.assert_called_with("chat.postMessage",
+                                               channel="_slack_channel_",
+                                               text="Slack Notiphier started running.")
 
 
 # Task Tests

@@ -2,6 +2,7 @@
 from flask import Flask, request, abort, make_response, jsonify
 
 from .webhook_firehose import WebhookFirehose
+from .config import get_config
 
 
 app = Flask(__name__)
@@ -29,4 +30,7 @@ def health():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False, host='0.0.0.0')
+    app.run(use_reloader=False,
+            debug=get_config('_flask_debug', "false") == "true",
+            host=get_config('host', '0.0.0.0'),
+            port=get_config('port', 5000))

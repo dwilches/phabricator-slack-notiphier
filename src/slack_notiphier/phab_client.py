@@ -1,11 +1,11 @@
 
 import json
-import os
 from urllib.parse import urljoin
 
 import phabricator
 
 from .logger import Logger
+from .config import get_config
 
 
 class PhabClient(object):
@@ -17,13 +17,10 @@ class PhabClient(object):
 
     def __init__(self):
         """
-            Attempts to connect to Phabricator using the url and token supplied in slack Notiphier's config file.
-            If a url or token is not found in the config file, they will be looked up in the environment variables:
-                - NOTIPHIER_PHABRICATOR_URL
-                - NOTIPHIER_PHABRICATOR_TOKEN
+            Attempts to connect to Phabricator using the url and token supplied in Notiphier's config file.
         """
-        self._url = os.environ.get('NOTIPHIER_PHABRICATOR_URL')
-        self._client = self._connect_phabricator(token=os.environ.get('NOTIPHIER_PHABRICATOR_TOKEN'))
+        self._url = get_config('phabricator_url')
+        self._client = self._connect_phabricator(token=get_config('phabricator_token'))
 
         self._transaction_handlers = {
             'TASK': self._handle_task,
