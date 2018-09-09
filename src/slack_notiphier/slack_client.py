@@ -1,6 +1,4 @@
 
-import os
-
 import slackclient
 
 from .logger import Logger
