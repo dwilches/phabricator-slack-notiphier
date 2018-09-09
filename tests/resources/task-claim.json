@@ -22,7 +22,15 @@
         ]
     },
     "expected_responses": [
-        "User ph-username-bb claimed task <http://_phab_url_/T2|T2>: T2"
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "User ph-username-bb claimed task <http://_phab_url_/T2|T2>: T2"
+                }
+            ]
+        }
     ],
     "mocked_phab_calls": {
         "transaction.search": [

@@ -221,11 +221,15 @@ class PhabClient(object):
             Receives an object representing a transaction for a differential revision (in Phabricator's own format).
             Returns a generator with the relevant parts of the transactions.
         """
+        repo_phid = self._get_repo_for(diff['objectPHID'])
+        repo_name = self.get_repo(repo_phid)['name']
+
         if diff['type'] == 'create':
             yield {
                 'type': 'diff-create',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         elif diff['type'] == 'comment':
             for comment in diff['comments']:
@@ -236,43 +240,50 @@ class PhabClient(object):
                     'type': 'diff-add-comment',
                     'author': diff['authorPHID'],
                     'diff': diff['objectPHID'],
-                    'comment': comment['content']['raw']
+                    'comment': comment['content']['raw'],
+                    'repo': repo_name,
                 }
         elif diff['type'] == 'update':
             yield {
                 'type': 'diff-update',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         elif diff['type'] == 'abandon':
             yield {
                 'type': 'diff-abandon',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         elif diff['type'] == 'reclaim':
             yield {
                 'type': 'diff-reclaim',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         elif diff['type'] == 'accept':
             yield {
                 'type': 'diff-accept',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         elif diff['type'] == 'request-changes':
             yield {
                 'type': 'diff-request-changes',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         elif diff['type'] == 'commandeer':
             yield {
                 'type': 'diff-commandeer',
                 'author': diff['authorPHID'],
-                'diff': diff['objectPHID']
+                'diff': diff['objectPHID'],
+                'repo': repo_name,
             }
         else:
             self._logger.debug("No message will be generated")

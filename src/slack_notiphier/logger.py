@@ -12,11 +12,16 @@ _valid_levels = {
     'ERROR': logging.ERROR,
 }
 
-_log_level = get_config('log_level', 'INFO')
-if _log_level not in _valid_levels:
-    raise ValueError("Configured log level is not valid: " + _log_level)
 
-logging.basicConfig(level=_valid_levels[_log_level], format='%(message)s')
+def reload():
+    _log_level = get_config('log_level', 'INFO')
+    if _log_level not in _valid_levels:
+        raise ValueError("Configured log level is not valid: " + _log_level)
+
+    logging.basicConfig(level=_valid_levels[_log_level], format='%(message)s')
+
+
+reload()
 
 
 class Logger(object):

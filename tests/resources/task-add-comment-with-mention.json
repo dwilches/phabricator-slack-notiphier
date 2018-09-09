@@ -22,7 +22,15 @@
         ]
     },
     "expected_responses": [
-        "<@SLACK-ID-cc> User ph-username-bb commented on task <http://_phab_url_/T2|T2>: T2 with: Hey <@SLACK-ID-dd>,<@SLACK-ID-ee>: look at this"
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "<@SLACK-ID-cc> User ph-username-bb commented on task <http://_phab_url_/T2|T2>: T2 with: Hey <@SLACK-ID-dd>,<@SLACK-ID-ee>: look at this"
+                }
+            ]
+        }
     ],
     "mocked_phab_calls": {
         "transaction.search": [

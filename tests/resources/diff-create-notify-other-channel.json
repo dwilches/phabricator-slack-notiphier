@@ -41,7 +41,7 @@
     },
     "expected_responses": [
         {
-            "channel": "_slack_channel_",
+            "channel": "_slack_channel_x_",
             "attachments": [
                 {
                     "color": "#F0F0F0",
@@ -50,7 +50,7 @@
             ]
         },
         {
-            "channel": "_slack_channel_",
+            "channel": "_slack_channel_x_",
             "attachments": [
                 {
                     "color": "#F0F0F0",
@@ -223,7 +223,7 @@
                             "type": "REPO",
                             "phid": "PHID-REPO-2bdkr2te4eqaopwszp57",
                             "fields": {
-                                "name": "Repo Name",
+                                "name": "RepoX",
                                 "vcs": "git",
                                 "callsign": null,
                                 "shortName": null,

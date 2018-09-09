@@ -14,7 +14,7 @@ class SlackClient:
 
     def __init__(self):
         self._client = self._connect_slack(get_config('slack_token'))
-        self._default_channel = get_config('slack_default_channel')
+        self._channels = get_config('channels', {})
         self._colors = {
             'none': '#F0F0F0',
             'info': '#28D7E5',
@@ -58,7 +58,7 @@ class SlackClient:
                 Post messages as the app
                 chat:write
         """
-        channel = message.get('channel', self._default_channel)
+        channel = message.get('channel', self._channels.get('default'))
         attachments = [
             {
                 'color': self._colors[message.get('type', 'none')],

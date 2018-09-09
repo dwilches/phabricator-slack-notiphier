@@ -8,6 +8,7 @@ from .users import Users
 from .logger import Logger
 from .phab_client import PhabClient
 from .slack_client import SlackClient
+from .config import get_config
 
 
 class WebhookFirehose:
@@ -188,10 +189,13 @@ class WebhookFirehose:
         owner_mention = self._users.get_mention(owner_phid)
         author_name = self._users[author_phid]['phab_username']
 
+        channel = self._get_channel_for_repo(transaction['repo'])
+
         if transaction['type'] == 'diff-create':
             message = "User {} created diff {}".format(author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-add-comment':
@@ -199,43 +203,50 @@ class WebhookFirehose:
             message = "User {} commented on diff {} with {}".format(author_name, diff_link, comment)
             message = "{} {}".format(owner_mention, message) if author_name != owner_name else message
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-update':
             message = "User {} updated diff {}".format(author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-abandon':
             message = "User {} abandoned diff {}".format(author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-reclaim':
             message = "User {} reclaimed diff {}".format(author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-accept':
             message = "{} User {} accepted diff {}".format(owner_mention, author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-request-changes':
             message = "{} User {} requested changes to diff {}".format(owner_mention, author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         elif transaction['type'] == 'diff-commandeer':
             message = "{} User {} took command of diff {}".format(owner_mention, author_name, diff_link)
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
@@ -254,10 +265,13 @@ class WebhookFirehose:
 
         author_name = self._users[author_phid]['phab_username']
 
+        channel = self._get_channel_for_repo(transaction['repo'])
+
         if transaction['type'] == 'commit-add-comment':
             message = "User {} created commit {} on repository {}".format(author_name, commit_link, transaction['repo'])
             return {
-                'text': message
+                'text': message,
+                'channel': channel,
             }
 
         self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
@@ -320,3 +334,7 @@ class WebhookFirehose:
             text = text.replace(phab_username, slack_mention)
 
         return text
+
+    def _get_channel_for_repo(self, repo_name):
+        channels = get_config('channels')
+        return channels.get(repo_name, channels['default'])

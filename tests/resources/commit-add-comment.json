@@ -22,7 +22,15 @@
         ]
     },
     "expected_responses": [
-        "User ph-username-bb created commit <https://phabricator.dwilches.com/R3:d988f886f4a4563630f1a6b3f49ccb59c98c311b|Make Flask listen on all interfaces> on repository SlackNotiphier"
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "User ph-username-bb created commit <https://phabricator.dwilches.com/R3:d988f886f4a4563630f1a6b3f49ccb59c98c311b|Make Flask listen on all interfaces> on repository SlackNotiphier"
+                }
+            ]
+        }
     ],
     "mocked_phab_calls": {
         "transaction.search": [

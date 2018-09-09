@@ -8,10 +8,11 @@ from unittest.mock import patch, MagicMock
 from slack_notiphier.slack_client import SlackClient
 from slack_notiphier.phab_client import PhabClient
 from slack_notiphier.users import Users
-from slack_notiphier.config import reload_config
+from slack_notiphier import config, logger
 
 with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-notiphier.cfg'}):
-    reload_config()
+    config.reload()
+    logger.reload()
 
 
 @pytest.fixture

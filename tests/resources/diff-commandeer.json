@@ -25,7 +25,15 @@
         ]
     },
     "expected_responses": [
-        "<@SLACK-ID-cc> User ph-username-bb took command of diff <http://_phab_url_/D123|D123>: Name Diff D123"
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "<@SLACK-ID-cc> User ph-username-bb took command of diff <http://_phab_url_/D123|D123>: Name Diff D123"
+                }
+            ]
+        }
     ],
     "mocked_phab_calls": {
         "transaction.search": [
@@ -100,6 +108,43 @@
                                 "policy": {
                                     "view": "users",
                                     "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "diffusion.repository.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-REPO-2bdkr2te4eqaopwszp57"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 4,
+                            "type": "REPO",
+                            "phid": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                            "fields": {
+                                "name": "Repo Name",
+                                "vcs": "git",
+                                "callsign": null,
+                                "shortName": null,
+                                "status": "active",
+                                "isImporting": false,
+                                "spacePHID": null,
+                                "dateCreated": 1535085582,
+                                "dateModified": 1535086298,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "admin",
+                                    "diffusion.push": "users"
                                 }
                             },
                             "attachments": {}

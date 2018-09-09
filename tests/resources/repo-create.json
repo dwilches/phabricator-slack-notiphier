@@ -28,7 +28,15 @@
         ]
     },
     "expected_responses": [
-        "User ph-username-bb created repository <http://_phab_url_/source/4|Repo Name>"
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "User ph-username-bb created repository <http://_phab_url_/source/4|Repo Name>"
+                }
+            ]
+        }
     ],
     "mocked_phab_calls": {
         "transaction.search": [

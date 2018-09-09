@@ -16,11 +16,17 @@ def get_config(name, default=_no_default):
         return _config.get(name, default)
 
 
-def reload_config():
+def reload():
     global _config
     _config_file = os.getenv('NOTIPHIER_CONFIG_FILE', "/etc/slack-notiphier.cfg")
     with open(_config_file, 'r') as config_fp:
         _config = json.load(config_fp)
 
+    if 'channels' not in _config:
+        raise KeyError('Need a channels element in the config file.')
 
-reload_config()
+    if 'default' not in _config['channels']:
+        raise KeyError('Need to specify a default channels in the config file.')
+
+
+reload()

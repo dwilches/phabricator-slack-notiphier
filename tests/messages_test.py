@@ -7,10 +7,11 @@ import os
 from unittest.mock import patch
 
 from slack_notiphier.webhook_firehose import WebhookFirehose
-from slack_notiphier.config import reload_config
+from slack_notiphier import config, logger
 
 with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-notiphier.cfg'}):
-    reload_config()
+    config.reload()
+    logger.reload()
 
 # TODO: these fixtures should go in a common file
 
@@ -136,10 +137,11 @@ def _execute_test_from_file(test_filename, Phabricator, Slack):
 
             for expected in test_spec["expected_responses"]:
                 instance_slack.api_call.assert_any_call("chat.postMessage",
-                                                        channel="_slack_channel_",
-                                                        text=expected)
+                                                        channel=expected['channel'],
+                                                        attachments=expected['attachments'])
         except Exception as e:
-            print("Exception in test. Some information about attempted calls:", instance_phab.mock_calls)
+            print("Exception in test. Some information about attempted Phab calls:", instance_phab.mock_calls)
+            print("Exception in test. Some information about attempted Slack calls:", instance_slack.mock_calls)
             raise e
 
 
@@ -147,7 +149,7 @@ def _mock_phab_call(method, mocked_phab_calls):
 
     def inner_phab_call_handler(*args, **kwargs):
         if method not in mocked_phab_calls:
-            raise ValueError("Mock Phabricator called with unexpected method: method={} valid methods={}"
+            raise ValueError("Mock Phabricator called with unexpected method: {} valid methods={}"
                              .format(method, mocked_phab_calls.keys()))
 
         for expected_call in mocked_phab_calls[method]:
@@ -188,7 +190,10 @@ def test_welcome_message(Phabricator, Slack):
     WebhookFirehose()
     slack_instance.api_call.assert_called_with("chat.postMessage",
                                                channel="_slack_channel_",
-                                               text="Slack Notiphier started running.")
+                                               attachments=[{
+                                                   'text': "Slack Notiphier started running.",
+                                                   'color': '#28D7E5',
+                                               }])
 
 
 # Task Tests
@@ -277,6 +282,10 @@ def test_diff_add_comment_own():
 
 def test_diff_add_comment_with_mention():
     _execute_test_from_file("diff-add-comment-with-mention.json")
+
+
+def test_diff_create_notify_other_channel():
+    _execute_test_from_file("diff-create-notify-other-channel.json")
 
 
 # Commit Tests

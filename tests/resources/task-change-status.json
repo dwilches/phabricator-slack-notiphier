@@ -22,7 +22,15 @@
         ]
     },
     "expected_responses": [
-        "<@SLACK-ID-cc> User ph-username-bb changed the status of task <http://_phab_url_/T8|T8>: Task Name from open to wontfix"
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "<@SLACK-ID-cc> User ph-username-bb changed the status of task <http://_phab_url_/T8|T8>: Task Name from open to wontfix"
+                }
+            ]
+        }
     ],
     "mocked_phab_calls": {
         "transaction.search": [
