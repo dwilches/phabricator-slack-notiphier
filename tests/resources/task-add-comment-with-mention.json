@@ -27,7 +27,7 @@
             "attachments": [
                 {
                     "color": "#F0F0F0",
-                    "text": "<@SLACK-ID-cc> User ph-username-bb commented on task <http://_phab_url_/T2|T2>: T2 with: Hey <@SLACK-ID-dd>,<@SLACK-ID-ee>: look at this"
+                    "text": "<@SLACK-ID-cc> User ph-username-bb commented on task <http://_phab_url_/T2|T2>: T2 with: Hey <@SLACK-ID-ff>,<@SLACK-ID-gg>: look at this"
                 }
             ]
         }
@@ -63,7 +63,7 @@
                                     "dateModified": 1534912766,
                                     "removed": false,
                                     "content": {
-                                        "raw": "Hey @ph-username-dd,@ph-username-ee: look at this"
+                                        "raw": "Hey @ph-username-ff,@ph-username-gg: look at this"
                                     }
                                 }
                             ],

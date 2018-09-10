@@ -15,74 +15,6 @@ with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-
     logger.reload()
 
 
-@pytest.fixture
-def fixture_phab_users():
-    return {
-        'data': [
-            {
-                "type": "USER",
-                "phid": "PHID-USER-aa",
-                "fields": {
-                    "username": "ph-username-aa",
-                    "realName": "PH Username AA",
-                    "roles": ["disabled"],
-                },
-            },
-            {
-                "type": "USER",
-                "phid": "PHID-USER-bb",
-                "fields": {
-                    "username": "ph-username-bb",
-                    "realName": "User Name BB",
-                    "roles": [],
-                },
-            },
-            {
-                "type": "USER",
-                "phid": "PHID-USER-cc",
-                "fields": {
-                    "username": "ph-username-cc",
-                    "realName": "User Name CC",
-                    "roles": [],
-                },
-            },
-        ]
-    }
-
-
-@pytest.fixture
-def fixture_slack_users():
-    return {
-        'ok': True,
-        'members': [
-            {
-                'id': "SLACK-ID-bb",
-                'real_name': "User Name BB",
-                'is_bot': False,
-                'deleted': False,
-            },
-            {
-                'id': "SLACK-ID-cc",
-                'real_name': "User Name CC",
-                'is_bot': False,
-                'deleted': False,
-            },
-            {
-                'id': "SLACK-ID-dd",
-                'real_name': "User Name DD",
-                'is_bot': False,
-                'deleted': True,
-            },
-            {
-                'id': "SLACK-ID-ee",
-                'real_name': "User Name EE",
-                'is_bot': True,
-                'deleted': False,
-            }
-        ]
-    }
-
-
 @patch("phabricator.Phabricator")
 def test_phab_get_users(Phabricator, fixture_phab_users):
 
@@ -97,7 +29,12 @@ def test_phab_get_users(Phabricator, fixture_phab_users):
 
     assert users == {
         'PHID-USER-bb': ('ph-username-bb', 'User Name BB'),
-        'PHID-USER-cc': ('ph-username-cc', 'User Name CC')
+        'PHID-USER-cc': ('ph-username-cc', 'User Name CC'),
+        'PHID-USER-dd': ('ph-username-dd', 'User Name DD'),
+        'PHID-USER-ee': ('ph-username-ee', 'User Name EE'),
+        'PHID-USER-ff': ('ph-username-ff', 'User Name FF'),
+        'PHID-USER-gg': ('ph-username-gg', 'User Name GG'),
+        'PHID-USER-ii': ('ph-username-ii', 'User Name II'),
     }
 
 
@@ -126,8 +63,12 @@ def test_slack_get_users(Slack, fixture_slack_users):
     instance.api_call.assert_called_with("users.list")
 
     assert users == {
+        "User Name AA": "SLACK-ID-aa",
         "User Name BB": "SLACK-ID-bb",
         "User Name CC": "SLACK-ID-cc",
+        "User Name FF": "SLACK-ID-ff",
+        "User Name GG": "SLACK-ID-gg",
+        "User Name HH": "SLACK-ID-hh",
     }
 
 
@@ -159,21 +100,34 @@ def test_get_users(Phabricator, Slack, fixture_phab_users, fixture_slack_users):
     users = Users(phab_client, slack_client)
     instance.api_call.assert_called_with("users.list")
 
-    expected_user_2 = {
+    expected_user_b = {
         'phab_username': "ph-username-bb",
         'phid': "PHID-USER-bb",
         'slack_id': "SLACK-ID-bb",
     }
-    expected_user_3 = {
+    expected_user_c = {
         'phab_username': "ph-username-cc",
         'phid': "PHID-USER-cc",
         'slack_id': "SLACK-ID-cc",
     }
+    expected_user_f = {
+        'phab_username': "ph-username-ff",
+        'phid': "PHID-USER-ff",
+        'slack_id': "SLACK-ID-ff",
+    }
+    expected_user_g = {
+        'phab_username': "ph-username-gg",
+        'phid': "PHID-USER-gg",
+        'slack_id': "SLACK-ID-gg",
+    }
 
-    assert expected_user_2 == users["PHID-USER-bb"]
-    assert expected_user_2 == users["ph-username-bb"]
-    assert expected_user_3 == users["PHID-USER-cc"]
-    assert expected_user_3 == users["ph-username-cc"]
+    assert expected_user_b == users["PHID-USER-bb"]
+    assert expected_user_b == users["ph-username-bb"]
+    assert expected_user_c == users["PHID-USER-cc"]
+    assert expected_user_c == users["ph-username-cc"]
+
+    assert expected_user_f == users["ph-username-ff"]
+    assert expected_user_g == users["ph-username-gg"]
 
     assert users["PHID-USER-aa"] is None
     assert users["ph-username-aa"] is None

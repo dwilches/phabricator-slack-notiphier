@@ -27,7 +27,7 @@
             "attachments": [
                 {
                     "color": "#F0F0F0",
-                    "text": "<@SLACK-ID-cc> User ph-username-bb commented on diff <http://_phab_url_/D123|D123>: Name Diff D123 with Check this out <@SLACK-ID-dd>!"
+                    "text": "<@SLACK-ID-cc> User ph-username-bb commented on diff <http://_phab_url_/D123|D123>: Name Diff D123 with Check this out <@SLACK-ID-ff>!"
                 }
             ]
         }
@@ -63,7 +63,7 @@
                                     "dateModified": 1535088460,
                                     "removed": false,
                                     "content": {
-                                        "raw": "Check this out @ph-username-dd!"
+                                        "raw": "Check this out @ph-username-ff!"
                                     }
                                 }
                             ],
