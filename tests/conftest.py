@@ -14,7 +14,15 @@ import pytest
 
 
 @pytest.fixture
-def fixture_phab_users():
+def users(_fixture_phab_users, _fixture_slack_users):
+    return {
+        'phab': _fixture_phab_users,
+        'slack': _fixture_slack_users
+    }
+
+
+@pytest.fixture
+def _fixture_phab_users():
     return {
         'data': [
             {
@@ -94,7 +102,7 @@ def fixture_phab_users():
 
 
 @pytest.fixture
-def fixture_slack_users():
+def _fixture_slack_users():
     return {
         'ok': True,
         'members': [

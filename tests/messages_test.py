@@ -17,13 +17,13 @@ with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def _execute_test_from_file(test_filename, Phabricator, Slack, fixture_phab_users, fixture_slack_users):
+def _execute_test_from_file(test_filename, Phabricator, Slack, users):
     with open("../tests/resources/" + test_filename, 'r') as fp_test_spec:
         test_spec = json.load(fp_test_spec)
 
         # Mock Phabricator calls
         instance_phab = Phabricator.return_value
-        instance_phab.user.search.return_value = fixture_phab_users
+        instance_phab.user.search.return_value = users['phab']
         instance_phab.transaction.search.side_effect = _mock_phab_call("transaction.search",
                                                                        test_spec["mocked_phab_calls"])
         instance_phab.differential.revision.search.side_effect = _mock_phab_call("differential.revision.search",
@@ -39,7 +39,7 @@ def _execute_test_from_file(test_filename, Phabricator, Slack, fixture_phab_user
 
         # Mock Slack calls
         instance_slack = Slack.return_value
-        instance_slack.api_call.side_effect = _mock_slack_api_call(fixture_slack_users)
+        instance_slack.api_call.side_effect = _mock_slack_api_call(users['slack'])
 
         webhook = WebhookFirehose()
 
@@ -92,17 +92,17 @@ def _mock_slack_api_call(fixture_slack_users):
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def test_welcome_message(Phabricator, Slack, fixture_phab_users, fixture_slack_users):
+def test_welcome_message(Phabricator, Slack, users):
     """
         Simple test to ensure everything is correctly wired.
         Asserts we send the initial welcome message to Slack when the webhook starts running.
     """
 
     phab_instance = Phabricator.return_value
-    phab_instance.user.search.return_value = fixture_phab_users
+    phab_instance.user.search.return_value = users['phab']
 
     slack_instance = Slack.return_value
-    slack_instance.api_call.side_effect = _mock_slack_api_call(fixture_slack_users)
+    slack_instance.api_call.side_effect = _mock_slack_api_call(users['slack'])
 
     WebhookFirehose()
     slack_instance.api_call.assert_called_with("chat.postMessage",
@@ -132,10 +132,8 @@ def task_test_file(request):
     return request.param
 
 
-def test_tasks(task_test_file, fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file(task_test_file,
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+def test_tasks(task_test_file, users):
+    _execute_test_from_file(task_test_file, users=users)
 
 
 # Diff Revision Tests
@@ -160,10 +158,8 @@ def diff_test_file(request):
     return request.param
 
 
-def test_diffs(diff_test_file, fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file(diff_test_file,
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+def test_diffs(diff_test_file, users):
+    _execute_test_from_file(diff_test_file, users=users)
 
 
 # Commit Tests
@@ -176,10 +172,8 @@ def commit_test_file(request):
     return request.param
 
 
-def test_commits(commit_test_file, fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file(commit_test_file,
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+def test_commits(commit_test_file, users):
+    _execute_test_from_file(commit_test_file, users=users)
 
 
 # Project Tests
@@ -192,10 +186,8 @@ def proj_test_file(request):
     return request.param
 
 
-def test_projs(proj_test_file, fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file(proj_test_file,
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+def test_projs(proj_test_file, users):
+    _execute_test_from_file(proj_test_file, users=users)
 
 
 # Repository Tests
@@ -208,7 +200,5 @@ def repo_test_file(request):
     return request.param
 
 
-def test_repos(repo_test_file, fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file(repo_test_file,
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+def test_repos(repo_test_file, users):
+    _execute_test_from_file(repo_test_file, users=users)

@@ -16,10 +16,10 @@ with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-
 
 
 @patch("phabricator.Phabricator")
-def test_phab_get_users(Phabricator, fixture_phab_users):
+def test_phab_get_users(Phabricator, users):
 
     instance = Phabricator.return_value
-    instance.user.search.return_value = fixture_phab_users
+    instance.user.search.return_value = users['phab']
 
     phab_client = PhabClient()
     users = phab_client.get_users()
@@ -50,10 +50,10 @@ def test_wrong_phab_url(Phabricator):
 
 
 @patch("slackclient.SlackClient")
-def test_slack_get_users(Slack, fixture_slack_users):
+def test_slack_get_users(Slack, users):
 
     instance = Slack.return_value
-    instance.api_call.return_value = fixture_slack_users
+    instance.api_call.return_value = users['slack']
 
     slack_client = SlackClient()
     users = slack_client.get_users()
@@ -88,12 +88,12 @@ def test_wrong_slack_token(Slack):
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def test_get_users(Phabricator, Slack, fixture_phab_users, fixture_slack_users):
+def test_get_users(Phabricator, Slack, users):
 
     instance = Phabricator.return_value
-    instance.user.search.return_value = fixture_phab_users
+    instance.user.search.return_value = users['phab']
     instance = Slack.return_value
-    instance.api_call.return_value = fixture_slack_users
+    instance.api_call.return_value = users['slack']
 
     phab_client = PhabClient()
     slack_client = SlackClient()
@@ -136,12 +136,12 @@ def test_get_users(Phabricator, Slack, fixture_phab_users, fixture_slack_users):
 
 @patch("slackclient.SlackClient")
 @patch("phabricator.Phabricator")
-def test_mention_users(Phabricator, Slack, fixture_phab_users, fixture_slack_users):
+def test_mention_users(Phabricator, Slack, users):
 
     instance = Phabricator.return_value
-    instance.user.search.return_value = fixture_phab_users
+    instance.user.search.return_value = users['phab']
     instance = Slack.return_value
-    instance.api_call.return_value = fixture_slack_users
+    instance.api_call.return_value = users['slack']
 
     phab_client = PhabClient()
     slack_client = SlackClient()
