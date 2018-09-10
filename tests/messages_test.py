@@ -5,6 +5,8 @@ import json
 import os
 from unittest.mock import patch
 
+import pytest
+
 from slack_notiphier.webhook_firehose import WebhookFirehose
 from slack_notiphier import config, logger
 
@@ -113,165 +115,100 @@ def test_welcome_message(Phabricator, Slack, fixture_phab_users, fixture_slack_u
 
 # Task Tests
 
-def test_task_create(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-create.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+
+@pytest.fixture(params=[
+    "task-create.json",
+    "task-add-comment.json",
+    "task-add-comment-with-mention.json",
+    "task-add-comment-own.json",
+    "task-claim.json",
+    "task-assign.json",
+    "task-change-priority.json",
+    "task-change-priority-own.json",
+    "task-change-status.json",
+    "task-change-status-own.json",
+])
+def task_test_file(request):
+    return request.param
 
 
-def test_task_add_comment(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-add-comment.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_add_comment_with_mention(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-add-comment-with-mention.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_add_comment_own(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-add-comment-own.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_claim(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-claim.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_assign(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-assign.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_change_priority(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-change-priority.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_change_priority_own(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-change-priority-own.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_change_status(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-change-status.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_task_change_status_own(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("task-change-status-own.json",
+def test_tasks(task_test_file, fixture_phab_users, fixture_slack_users):
+    _execute_test_from_file(task_test_file,
                             fixture_phab_users=fixture_phab_users,
                             fixture_slack_users=fixture_slack_users)
 
 
 # Diff Revision Tests
 
-def test_diff_create(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-create.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
+
+@pytest.fixture(params=[
+    "diff-create.json",
+    "diff-update.json",
+    "diff-abandon.json",
+    "diff-reclaim.json",
+    "diff-accept.json",
+    "diff-request-changes.json",
+    "diff-commandeer.json",
+    "diff-add-comment.json",
+    "diff-add-comment-own.json",
+    "diff-add-comment-with-mention.json",
+    "diff-create-notify-other-channel.json",
+    "diff-add-comment-inline.json",
+    "diff-add-comment-inline-own.json",
+])
+def diff_test_file(request):
+    return request.param
 
 
-def test_diff_update(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-update.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_abandon(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-abandon.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_reclaim(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-reclaim.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_accept(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-accept.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_request_changes(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-request-changes.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_commandeer(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-commandeer.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_add_comment(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-add-comment.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_add_comment_own(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-add-comment-own.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_add_comment_with_mention(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-add-comment-with-mention.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_create_notify_other_channel(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-create-notify-other-channel.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_add_comment_inline(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-add-comment-inline.json",
-                            fixture_phab_users=fixture_phab_users,
-                            fixture_slack_users=fixture_slack_users)
-
-
-def test_diff_add_comment_inline_own(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("diff-add-comment-inline-own.json",
+def test_diffs(diff_test_file, fixture_phab_users, fixture_slack_users):
+    _execute_test_from_file(diff_test_file,
                             fixture_phab_users=fixture_phab_users,
                             fixture_slack_users=fixture_slack_users)
 
 
 # Commit Tests
 
-def test_commit_add_comment(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("commit-add-comment.json",
+
+@pytest.fixture(params=[
+    "commit-add-comment.json",
+])
+def commit_test_file(request):
+    return request.param
+
+
+def test_commits(commit_test_file, fixture_phab_users, fixture_slack_users):
+    _execute_test_from_file(commit_test_file,
                             fixture_phab_users=fixture_phab_users,
                             fixture_slack_users=fixture_slack_users)
 
 
 # Project Tests
 
-def test_proj_create(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("proj-create.json",
+
+@pytest.fixture(params=[
+    "proj-create.json",
+])
+def proj_test_file(request):
+    return request.param
+
+
+def test_projs(proj_test_file, fixture_phab_users, fixture_slack_users):
+    _execute_test_from_file(proj_test_file,
                             fixture_phab_users=fixture_phab_users,
                             fixture_slack_users=fixture_slack_users)
 
 
 # Repository Tests
 
-def test_repo_create(fixture_phab_users, fixture_slack_users):
-    _execute_test_from_file("repo-create.json",
+
+@pytest.fixture(params=[
+    "repo-create.json",
+])
+def repo_test_file(request):
+    return request.param
+
+
+def test_repos(repo_test_file, fixture_phab_users, fixture_slack_users):
+    _execute_test_from_file(repo_test_file,
                             fixture_phab_users=fixture_phab_users,
                             fixture_slack_users=fixture_slack_users)
