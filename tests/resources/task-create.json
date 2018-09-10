@@ -144,7 +144,7 @@
                                     "raw": ""
                                 },
                                 "authorPHID": "PHID-USER-bb",
-                                "ownerPHID": "PHID-USER-bb",
+                                "ownerPHID": null,
                                 "status": {
                                     "value": "resolved",
                                     "name": "Resolved",

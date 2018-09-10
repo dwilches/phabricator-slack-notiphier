@@ -54,12 +54,19 @@ class WebhookFirehose:
             transactions = self._get_transactions(object_type, object_phid, request['transactions'])
             self._handle_transactions(object_type, transactions)
         except Exception as e:
+            try:
+                fmt_request = json.dumps(request)
+            except:
+                fmt_request = request
+
             message = textwrap.dedent("""
                 *Exception in Slack-Notiphier:* {}
                 *Original message:* {}
                 *Stacktrace:*
                 {}
-                """).format(e, request, textwrap.indent(traceback.format_exc(), "        "))
+                """).format(e,
+                            fmt_request,
+                            textwrap.indent(traceback.format_exc(), "        "))
             self._slack_client.send_message({
                 'text': message,
                 'type': 'error',
@@ -102,16 +109,18 @@ class WebhookFirehose:
         task_link = self._phab_client.get_link(transaction['task'])
 
         owner_phid = self._phab_client.get_owner(transaction['task'])
-        author_phid = transaction['author']
+        if owner_phid:
+            if not self._users[owner_phid]:
+                raise ValueError("Unknown Phabricator user: {}".format(owner_phid))
+            owner_name = self._users[owner_phid]['phab_username']
+            owner_mention = self._users.get_mention(owner_phid)
+        else:
+            owner_name = None
+            owner_mention = None
 
-        if not self._users[owner_phid]:
-            raise ValueError("Unknown Phabricator user: {}".format(owner_phid))
+        author_phid = transaction['author']
         if not self._users[author_phid]:
             raise ValueError("Unknown Phabricator user: {}".format(author_phid))
-
-        owner_name = self._users[owner_phid]['phab_username']
-        owner_mention = self._users.get_mention(owner_phid)
-
         author_name = self._users[author_phid]['phab_username']
 
         if transaction['type'] == 'task-create':
@@ -126,7 +135,7 @@ class WebhookFirehose:
                                                                      task_link,
                                                                      comment)
 
-            message = "{} {}".format(owner_mention, message) if author_name != owner_name else message
+            message = "{} {}".format(owner_mention, message) if owner_name and author_name != owner_name else message
             return {
                 'text': message
             }
