@@ -1,0 +1,155 @@
+{
+    "request": {
+        "object": {
+            "type": "DREV",
+            "phid": "PHID-DREV-n2ychras6vyrlrn2amz2"
+        },
+        "triggers": [
+            {
+                "phid": "PHID-HWBH-c5z5bjus623e7nsjgndf"
+            }
+        ],
+        "action": {
+            "test": false,
+            "silent": false,
+            "secure": false,
+            "epoch": 1536543325
+        },
+        "transactions": [
+            {
+                "phid": "PHID-XACT-DREV-fsrzjjhvs33ajtl"
+            }
+        ]
+    },
+    "expected_responses": [
+        {
+            "channel": "_slack_channel_",
+            "attachments": [
+                {
+                    "color": "#F0F0F0",
+                    "text": "User ph-username-bb commented on diff <http://_phab_url_/D123|D123>: Name Diff D123 with Comment Inline ABC"
+                }
+            ]
+        }
+    ],
+    "mocked_phab_calls": {
+        "transaction.search": [
+            {
+                "kwargs": {
+                    "objectIdentifier": "PHID-DREV-n2ychras6vyrlrn2amz2",
+                    "constraints": {
+                        "phids": [
+                            "PHID-XACT-DREV-fsrzjjhvs33ajtl"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 8,
+                            "phid": "PHID-XACT-DREV-fsrzjjhvs33ajtl",
+                            "type": "inline",
+                            "authorPHID": "PHID-USER-bb",
+                            "objectPHID": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "dateCreated": 1535088460,
+                            "dateModified": 1535088460,
+                            "comments": [
+                                {
+                                    "id": 1,
+                                    "phid": "PHID-XCMT-vhwmlz2s7mfgz5jy35ju",
+                                    "version": 1,
+                                    "authorPHID": "PHID-USER-r3axkdu63rznqohq3r4b",
+                                    "dateCreated": 1535088460,
+                                    "dateModified": 1535088460,
+                                    "removed": false,
+                                    "content": {
+                                        "raw": "Comment Inline ABC"
+                                    }
+                                }
+                            ],
+                            "fields": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "differential.revision.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-DREV-627i7l6ala25ktaxhasf"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 123,
+                            "type": "DREV",
+                            "phid": "PHID-DREV-627i7l6ala25ktaxhasf",
+                            "fields": {
+                                "title": "Name Diff D123",
+                                "authorPHID": "PHID-USER-bb",
+                                "status": {
+                                    "value": "needs-revision",
+                                    "name": "Needs Revision",
+                                    "closed": false,
+                                    "color.ansi": "red"
+                                },
+                                "repositoryPHID": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                                "diffPHID": "PHID-DIFF-clao6zltngounnpwqup3",
+                                "summary": "xyz",
+                                "testPlan": "abc",
+                                "dateCreated": 1535087827,
+                                "dateModified": 1535232597,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ],
+        "diffusion.repository.search": [
+            {
+                "kwargs": {
+                    "constraints": {
+                        "phids": [
+                            "PHID-REPO-2bdkr2te4eqaopwszp57"
+                        ]
+                    }
+                },
+                "response": {
+                    "data": [
+                        {
+                            "id": 4,
+                            "type": "REPO",
+                            "phid": "PHID-REPO-2bdkr2te4eqaopwszp57",
+                            "fields": {
+                                "name": "Repo Name",
+                                "vcs": "git",
+                                "callsign": null,
+                                "shortName": null,
+                                "status": "active",
+                                "isImporting": false,
+                                "spacePHID": null,
+                                "dateCreated": 1535085582,
+                                "dateModified": 1535086298,
+                                "policy": {
+                                    "view": "users",
+                                    "edit": "admin",
+                                    "diffusion.push": "users"
+                                }
+                            },
+                            "attachments": {}
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

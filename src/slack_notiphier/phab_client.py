@@ -231,7 +231,7 @@ class PhabClient(object):
                 'diff': diff['objectPHID'],
                 'repo': repo_name,
             }
-        elif diff['type'] == 'comment':
+        elif diff['type'] in ['comment', 'inline']:
             for comment in diff['comments']:
                 if comment['removed']:
                     continue

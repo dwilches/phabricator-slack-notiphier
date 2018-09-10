@@ -288,6 +288,14 @@ def test_diff_create_notify_other_channel():
     _execute_test_from_file("diff-create-notify-other-channel.json")
 
 
+def test_diff_add_comment_inline():
+    _execute_test_from_file("diff-add-comment-inline.json")
+
+
+def test_diff_add_comment_inline_own():
+    _execute_test_from_file("diff-add-comment-inline-own.json")
+
+
 # Commit Tests
 
 def test_commit_add_comment():
