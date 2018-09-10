@@ -1,5 +1,18 @@
 
 import pytest
+import os
+
+from unittest.mock import patch
+
+from slack_notiphier import config, logger
+
+
+@pytest.fixture(scope='session', autouse=True)
+def setup_once():
+    with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-notiphier.cfg'}):
+        config.reload()
+        logger.reload()
+
 
 # User     Valid in Phab              Valid in Slack
 # aa             F (disabled)               T

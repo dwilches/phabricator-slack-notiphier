@@ -2,17 +2,11 @@
 #   Repos/slack-notiphier/src $ ../venv/bin/python -m  pytest ../tests
 
 import json
-import os
 from unittest.mock import patch
 
 import pytest
 
 from slack_notiphier.webhook_firehose import WebhookFirehose
-from slack_notiphier import config, logger
-
-with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-notiphier.cfg'}):
-    config.reload()
-    logger.reload()
 
 
 @patch("slackclient.SlackClient")

@@ -2,17 +2,11 @@
 #   Repos/slack-notiphier/src $ ../venv/bin/python -m  pytest ../tests
 
 import pytest
-import os
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from slack_notiphier.slack_client import SlackClient
 from slack_notiphier.phab_client import PhabClient
 from slack_notiphier.users import Users
-from slack_notiphier import config, logger
-
-with patch.dict(os.environ, {'NOTIPHIER_CONFIG_FILE': '../tests/resources/slack-notiphier.cfg'}):
-    config.reload()
-    logger.reload()
 
 
 @patch("phabricator.Phabricator")
@@ -42,7 +36,7 @@ def test_phab_get_users(Phabricator, users):
 def test_wrong_phab_url(Phabricator):
 
     instance = Phabricator.return_value
-    instance.conduit.ping = MagicMock(side_effect=KeyError('Invalid URL or something'))
+    instance.conduit.ping.side_effect = KeyError('Invalid URL or something')
     instance.user.search.return_value = []
 
     with pytest.raises(Exception):
