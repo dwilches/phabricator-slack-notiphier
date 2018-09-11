@@ -1,5 +1,5 @@
 
-import json
+import yaml
 import os
 
 _no_default = object()
@@ -17,10 +17,10 @@ def get_config(name, default=_no_default):
 
 
 def reload():
-    global _config
+    global _config, _config_file
     _config_file = os.getenv('NOTIPHIER_CONFIG_FILE', "/etc/slack-notiphier.cfg")
     with open(_config_file, 'r') as config_fp:
-        _config = json.load(config_fp)
+        _config = yaml.load(config_fp)
 
     if 'channels' not in _config:
         raise KeyError('Need a channels element in the config file.')

@@ -15,17 +15,18 @@ default path with the environment variable `NOTIPHIER_CONFIG_FILE`.
  
 The config file should have contents similar to this:
 
-```json
-{
-    "phabricator_url": "https://phabricator.example.com",
-    "phabricator_token": "api-AAAAAAAAAAAAAa",
-    "phabricator_webhook_hmac": "BBBBBBBBBBBBB",
-    
-    "slack_token": "xoxa-CCCCCCCCCCCCC",
-    "channels": {
-        "default": "#general"
-    }
-}
+```yaml
+_flask_debug: true
+log_level: DEBUG
+phabricator_url: https://phabricator.example.com
+phabricator_token: api-xxxxxxxxxxxxxxx
+phabricator_webhook_hmac: xxxxxxxxxxxxxxxxxxxxxxxxxxx
+slack_token: xoxa-xxxxxxxxxxxxxxxxxx
+port: 5000
+
+channels:
+  default: "#general"
+  SlackNotiphier: "#ideas"
 ```
 
 #### Configure the `Herald Firehose Webhook` to forward events to `Slack Notiphier`
@@ -74,12 +75,11 @@ That's it. If you restart `Slack Notiphier` you should see in Slack a message si
    - Click on `Show` and copy this token to `Slack Notihier's config file.
 - **`channels`**: No default, mandatory. You can use this field to direct messages affecting certain repositories to
   only certain channels. You need at least a setting here `default` and then add as many extra rules as you want, for example:
-```json
-    "channels": {
-        "default": "#general",
-        "MyImportantRepo": "#important",
-        "NotSoImportantRepo": "#notimportant"
-    }
+```yaml
+    channels:
+        default: "#general"
+        MyImportantRepo: "#important"
+        NotSoImportantRepo: "#notimportant"
 ```
  - **`host`**: Optional, default `"0.0.0.0"`. Specifies in which network interface `Slack Notiphier` should listen. 
    By default it will listen on every interface (`0.0.0.0`) but you can specify here only one IP in case you want to 
@@ -88,7 +88,7 @@ That's it. If you restart `Slack Notiphier` you should see in Slack a message si
 
 ### Executing locally
 
-To test locally, execute the module `salck_notiphier` like this:
+You can execute `slack_notiphier` like this:
 
 ```bash
 $ cd slack-notiphier/src
