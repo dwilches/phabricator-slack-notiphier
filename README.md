@@ -13,21 +13,8 @@ To install, just clone this repository in your server and execute Slack Notiphie
 By default, Slack Notiphier searches for its config file in `/etc/slack-notiphier.cfg`,  but you can override the
 default path with the environment variable `NOTIPHIER_CONFIG_FILE`.
  
-The config file should have contents similar to this:
+The config file should have contents similar to this: `cfg/slack-notiphier.cfg`
 
-```yaml
-_flask_debug: true
-log_level: DEBUG
-phabricator_url: https://phabricator.example.com
-phabricator_token: api-xxxxxxxxxxxxxxx
-phabricator_webhook_hmac: xxxxxxxxxxxxxxxxxxxxxxxxxxx
-slack_token: xoxa-xxxxxxxxxxxxxxxxxx
-port: 5000
-
-channels:
-  default: "#general"
-  SlackNotiphier: "#ideas"
-```
 
 #### Configure the `Herald Firehose Webhook` to forward events to `Slack Notiphier`
 

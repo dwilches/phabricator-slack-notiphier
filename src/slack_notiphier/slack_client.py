@@ -22,6 +22,8 @@ class SlackClient:
             'error': 'danger',
             'success': 'good',
         }
+        if '__debug__' in self._channels:
+            self._logger.set_slack_debug_callback(self.slack_debug_callback)
 
     def _connect_slack(self, token):
         if not token:
@@ -58,7 +60,7 @@ class SlackClient:
                 Post messages as the app
                 chat:write
         """
-        channel = message.get('channel', self._channels.get('default'))
+        channel = message.get('channel', self._channels.get('__default__'))
         attachments = [
             {
                 'color': self._colors[message.get('type', 'none')],
@@ -73,3 +75,6 @@ class SlackClient:
             self._logger.error("Couldn't send message to Slack because '{}', dropping: {}",
                                result['error'],
                                message)
+
+    def slack_debug_callback(self, message):
+        self.send_message(message)

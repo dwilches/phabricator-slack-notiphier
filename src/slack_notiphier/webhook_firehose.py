@@ -96,7 +96,7 @@ class WebhookFirehose:
             Receives a single interesting transaction and send a message to Slack.
         """
         if object_type not in self._transaction_handlers:
-            self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+            self._logger.slack("No message will be generated for: {}", json.dumps(transaction, indent=4))
             return None
 
         return self._transaction_handlers[object_type](transaction)
@@ -177,7 +177,7 @@ class WebhookFirehose:
                 'text': message
             }
 
-        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+        self._logger.slack("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_diff(self, transaction):
         """
@@ -258,7 +258,7 @@ class WebhookFirehose:
                 'channel': channel,
             }
 
-        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+        self._logger.slack("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_commit(self, transaction):
         """
@@ -283,7 +283,7 @@ class WebhookFirehose:
                 'channel': channel,
             }
 
-        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+        self._logger.slack("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_proj(self, transaction):
         """
@@ -305,7 +305,7 @@ class WebhookFirehose:
                 'text': message
             }
 
-        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+        self._logger.slack("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _handle_repo(self, transaction):
         """
@@ -327,7 +327,7 @@ class WebhookFirehose:
                 'text': message
             }
 
-        self._logger.warn("No message will be generated for: {}", json.dumps(transaction, indent=4))
+        self._logger.slack("No message will be generated for: {}", json.dumps(transaction, indent=4))
 
     def _replace_mentions(self, text):
         matches = self._re_phab_mention.finditer(text)
@@ -346,4 +346,4 @@ class WebhookFirehose:
 
     def _get_channel_for_repo(self, repo_name):
         channels = get_config('channels')
-        return channels.get(repo_name, channels['default'])
+        return channels.get(repo_name, channels['__default__'])

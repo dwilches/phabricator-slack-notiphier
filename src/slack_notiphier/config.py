@@ -25,7 +25,7 @@ def reload():
     if 'channels' not in _config:
         raise KeyError('Need a channels element in the config file.')
 
-    if 'default' not in _config['channels']:
+    if '__default__' not in _config['channels']:
         raise KeyError('Need to specify a default channels in the config file.')
 
 
