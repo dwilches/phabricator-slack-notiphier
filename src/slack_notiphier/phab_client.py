@@ -86,7 +86,8 @@ class PhabClient(object):
             if object_type in self._transaction_handlers:
                 results.extend(self._transaction_handlers[object_type](t))
             else:
-                self._logger.debug("No message will be generated for object of type {}", object_type)
+                self._logger.slack_debug("No message will be generated for object of type {}.\n{}",
+                    object_type, json.dumps(t, indent=4))
 
         return results
 

@@ -23,7 +23,7 @@ class SlackClient:
             'success': 'good',
         }
         if '__debug__' in self._channels:
-            self._logger.set_slack_debug_callback(self.slack_debug_callback)
+            Logger.set_slack_debug_callback(self.slack_debug_callback)
 
     def _connect_slack(self, token):
         if not token:
@@ -77,4 +77,8 @@ class SlackClient:
                                message)
 
     def slack_debug_callback(self, message):
-        self.send_message(message)
+        self.send_message({
+            'channel': self._channels.get('__debug__'),
+            'type': 'info',
+            'text': message,
+        })

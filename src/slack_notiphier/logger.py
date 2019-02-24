@@ -41,10 +41,11 @@ class Logger(object):
     def error(self, message, *args):
         self._logger.error(colored(message.format(*args), 'red', attrs=['dark', 'bold']))
 
-    def slack(self, message, *args):
-        self._logger.warn(colored(message.format(*args), 'purple', attrs=['dark', 'bold']))
-        if self._slack_debug_callback:
-            self._slack_debug_callback(message.format(*args))
+    def slack_debug(self, message, *args):
+        self._logger.warn(colored(message.format(*args), 'magenta', attrs=['dark', 'bold']))
+        if Logger._slack_debug_callback:
+            Logger._slack_debug_callback(message.format(*args))
 
-    def set_slack_debug_callback(self, callback):
-        self._slack_debug_callback = callback
+    @classmethod
+    def set_slack_debug_callback(cls, callback):
+        cls._slack_debug_callback = callback
